@@ -1,0 +1,372 @@
+body {
+    font-size: 15px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}
+
+#main {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+#my-map-container {
+    display: flex;
+    flex-basis: 100%;
+    order: 2;
+    position: relative;
+    height: 100%;
+}
+
+#my-map {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+#sidebar-container {
+    display: flex;
+    flex-basis: 35vw;
+    min-width: 400px !important;
+    max-width: 550px !important;
+    order: 1;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    position: relative;
+    height: 100%;
+}
+
+#sidebar {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+#search-container {
+    display: flex;
+    height: 45px;
+    position: relative;
+    box-shadow: none;
+    width: 100%;
+    flex-shrink: 0;
+    z-index: 1;
+    padding-top: 10px;
+}
+
+.controls {
+    display: flex;
+    padding: 0 1.3rem;
+    flex: 1;
+    position: relative;
+    webkit-box-pack: justify !important;
+    -ms-flex-pack: justify !important;
+    justify-content: space-between !important;
+}
+
+#listing-stores-container, #selected-store-container {
+    display: flex;
+    overflow: auto;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+#listing-stores-container {
+    position: relative;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+#selected-store-container {
+    display: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: auto;
+    background: white;
+}
+
+#search-here {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 1em;
+    padding-top: 10%;
+}
+
+.store-link-page {
+    padding: 1em 0;
+    font-size: 17px;
+}
+
+#search-here button {
+    background-color: #008248;
+    border: 1px solid #008248;
+    color: #fff;
+    padding: 1rem 2rem;
+    border-radius: 2px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    cursor: pointer;
+}
+
+.selected-store-card {
+    vertical-align: middle;
+    line-height: 2em;
+    border-bottom: 1px solid rgba(0, 0, 0, .08);
+}
+
+.selected-store-card .hero {
+    background: #006341;
+    padding: .8rem 1.4rem;
+    font-size: 18px;
+    color: #FFF;
+}
+
+.selected-store-card .content {
+    padding: .8rem 1.4rem;
+    color: #8e8e8e;
+}
+
+
+#listing-stores-container.active:before {
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+    z-index: 1;
+    content: '';
+    width: 100%;
+    height: 3px;
+    margin-top: -3px;
+    position: absolute;
+}
+
+.store-card {
+    font-size: 15px;
+    padding: .8rem 1.3rem;
+    cursor: pointer;
+    vertical-align: middle;
+    line-height: 1.7em;
+    border-bottom: 1px solid rgba(0, 0, 0, .08);
+}
+
+.store-card:hover {
+    background: #f0f0f0;
+}
+
+input[type=search] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none
+}
+
+input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-search-decoration {
+    -webkit-appearance: none
+}
+
+#search-input {
+    height: 100%;
+    width: 100%;
+    border: 0;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 4.8rem;
+    padding-left: .6em;
+    font-size: 17px !important;
+    border-bottom-color: transparent;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 -1px 0 rgba(0, 0, 0, 0.02);
+    border-radius: 3px;
+    transition-property: background, box-shadow;
+    transition-duration: 0.3s;
+}
+
+#search-input:focus, button:focus {
+    outline: none;
+}
+
+#search-no-result, #back-to-results {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    top: 55px;
+    justify-content: center;
+    left: 1.3rem;
+    background: #FFF;
+    border-radius: 3px;
+    transition-property: background, box-shadow;
+    transition-duration: 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 -1px 0 rgba(0, 0, 0, 0.02);
+    margin-top: 10px;
+}
+
+#search-no-result {
+    right: 1.3rem;
+    padding: 1em;
+}
+
+#back-to-results {
+    display: flex;
+    padding: .5em;
+    padding-left: 1.3em;
+    font-size: .8em;
+    background: rgba(255, 255, 255, 0.75);
+    color: #006440;
+    cursor: pointer;
+}
+
+#back-to-results:hover {
+    background: #FFF;
+}
+
+#back-to-results:before {
+    font-size: 18px;
+    content: "\2039";
+    position: absolute;
+    left: 5px;
+    top: 2px;
+}
+
+.buttonContainer {
+    display: block;
+    height: 100%;
+    position: absolute;
+}
+
+.buttonContainer.search {
+    right: 2rem;
+}
+
+.buttonContainer.clear {
+    right: 4rem;
+    display: none;
+}
+
+.buttonContainer.load {
+    right: 4.5rem;
+    display: none;
+}
+
+.buttonContainer.clear svg {
+    padding: 0 1em;
+}
+
+#clear-button {
+    cursor: pointer;
+}
+
+.button {
+    color: rgba(0, 0, 0, .56);
+    transition: color .2s ease-out;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    border-radius: 0;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #888;;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #F8F8F8;
+}
+
+.store-photo {
+    margin-left: 10px;
+}
+
+.store-photo img {
+    height: 92px;
+    width: 80px;
+    vertical-align: top;
+}
+
+.store-photo-header {
+    overflow: hidden;
+    direction: ltr;
+    display: block;
+    width: 100%;
+    height: 250px;
+    background: #006341
+}
+
+.store-photo-header img {
+    width: 100%;
+}
+
+#store-address {
+    color: #8e8e8e;
+}
+
+.store-opening-hours {
+    padding: 0 1.4rem;
+    border-bottom: 1px solid rgba(0, 0, 0, .08);
+}
+
+#store-opening-hours-header {
+    border-bottom: 1px solid #E4E6E7;
+    padding: .8rem 0;
+    line-height: 20px;
+}
+
+.store-opening-hours ul {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    padding: 0;
+    width: 100%;
+}
+
+.store-opening-hours ul li {
+    display: flex;
+    padding: 5px 0;
+    justify-content: space-between;
+    max-width: 200px;
+}
+
+.store-opening-hours ul li {
+    flex: 1;
+    margin-right: 10px;
+    position: relative;
+}
+
+.store-opening-hours ul li img {
+    width: 100%;
+}
+
+
+.localities-input-wrapper, .localities-input-container {
+    width: 100%;
+    height: 100%;
+}
+
+.localities-item {
+    padding: 8px 8px 8px 30px;
+    cursor: pointer;
+}
+
+.localities-icon {
+    top: 8px;
+}
+
+.localities-empty-button {
+    right: 16px;
+}

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Locator Starter Kit using Woosmap JS API</title>
+    <meta property="og:title" content="Store Locator Starter Kit using Woosmap JS API"/>
+    <meta property="og:locale" content="en_US"/>
+    <meta name="description"
+          content="Build powerful personalized Store Locator with Woosmap Javascript API. Our mission is to make business personal and local."/>
+    <meta property="og:description"
+          content="Build powerful personalized Store Locator with Woosmap Javascript API. Our mission is to make business personal and local."/>
+    <link rel="canonical" href="https://demo.woosmap.com/storelocator/"/>
+    <meta property="og:url" content="https://demo.woosmap.com/storelocator/"/>
+    <meta property="og:site_name" content="Woosmap JS API Store Locator"/>
+    <meta property="og:image" content="https://www.woosmap.com/assets/og-image.png"/>
+    <meta name="twitter:site" content="@woosmap"/>
+    <script src="https://sdk.woosmap.com/localities/localitieswidget.js?key=woos-81a699ca-5082-3ffd-9f54-a684a4b82853"></script>
+    <script>
+        const woosmapsave = Object.assign({},woosmap);
+    </script>
+    <script src="https://sdk.woosmap.com/locator/loader.js"></script>
+</head>
+<body>
+<section class="page">
+    <div id="main">
+        <div id="my-map-container">
+            <div id="my-map"></div>
+        </div>
+        <div id="sidebar-container">
+            <div id="sidebar">
+                <div id="search-container">
+                    <div class="controls">
+                        <input id="search-input" type="search" placeholder="Search for Postcode Or Locality..."
+                               autocomplete="off" role="combobox">
+                    </div>
+                </div>
+                <div id="search-no-result"><p>No location attached to this search</p></div>
+                <section id="listing-stores-container" class="home">
+                </section>
+                <section id="selected-store-container">
+                </section>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

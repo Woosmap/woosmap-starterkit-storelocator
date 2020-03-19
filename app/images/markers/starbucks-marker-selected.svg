@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="65px" height="75px" viewBox="0 0 65 75" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <title>starbucks-marker-selected</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M30.5,70.3634348 C33.1413,70.3634348 35.7033,60.8001702 38.147875,60.1689367 C51.290325,56.7651665 61,44.8022974 61,30.5682103 C61,13.6853877 47.34515,0 30.5,0 C13.65485,0 0,13.6853877 0,30.5682103 C0,44.8099394 9.7173,56.7758653 22.8689,60.1735219 C25.3089,60.8001702 27.8648,70.3634348 30.5,70.3634348 Z" id="path-1"></path>
+        <filter x="-6.6%" y="-2.8%" width="113.1%" height="111.4%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="1" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.196076766 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="starbucks-marker-selected" transform="translate(2.000000, 0.000000)" fill-rule="nonzero">
+            <g id="Group">
+                <g id="b-link">
+                    <g id="b">
+                        <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                        <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    </g>
+                </g>
+            </g>
+            <g id="Group" transform="translate(17.000000, 13.000000)" fill="#00A862">
+                <g id="d-link">
+                    <path d="M26.8331889,2.72937434 C26.6693498,2.03278897 25.9426935,0.230752916 24.5576471,0.230752916 L2.74582043,0.230752916 C1.36229102,0.230752916 0.637151703,2.03278897 0.465727554,2.77783245 L0.0182043344,5.25222481 C-0.0318575851,5.53691622 0.0455108359,5.8276649 0.230588235,6.05026935 C0.415665635,6.27135949 0.68873065,6.39856204 0.978482972,6.39856204 L2.22851393,6.39856204 L3.9852322,31.2939173 C4.07625387,32.7506893 5.29442724,33.8909692 6.76139319,33.8909692 L20.5511765,33.8909692 C22.0181424,33.8909692 23.2363158,32.7506893 23.3273375,31.3014889 L25.0810217,6.39856204 L26.3340867,6.39856204 C26.625356,6.39856204 26.8984211,6.27135949 27.0834985,6.05026935 C27.2685759,5.82917922 27.3459443,5.53540191 27.2958824,5.25222481 L26.8377399,2.72937434 L26.8331889,2.72937434 Z M6.78414861,16.7716267 C6.78414861,12.9131495 9.94866873,9.77245811 13.8383282,9.77245811 C17.7264706,9.77245811 20.8894737,12.9146638 20.8894737,16.773141 C20.8894737,20.6285896 17.7264706,23.769281 13.8383282,23.769281 C9.94866873,23.769281 6.78414861,20.6285896 6.78414861,16.773141 L6.78414861,16.7716267 Z" id="d"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
