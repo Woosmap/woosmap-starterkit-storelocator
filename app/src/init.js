@@ -1,4 +1,5 @@
 (function () {
+    const mobileBreakPoint = 900;
     const woosmapLoadOptions = {
         version: '1.4',
         publicKey: 'starbucks-demo-woos', //replace with your public key
@@ -24,7 +25,8 @@
         },
         zoom: 4,
         scrollwheel: false,
-        mapTypeControl: false
+        mapTypeControl: false,
+        fullscreenControl: false
     };
     const woosmapOptions = {
         gentleCenter: true,
@@ -84,6 +86,29 @@
 
     let map, mapView, dataSource, selectedStoreObj = null;
     const photosSrcFull = ["1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg", "11.jpg", "12.jpg", "13.jpg", "14.jpg", "15.jpg", "16.jpg", "17.jpg", "18.jpg", "19.jpg", "20.jpg", "21.jpg", "22.jpg", "23.jpg"];
+
+    function debounce(func, wait, immediate) {
+        var timeout;
+        return function () {
+            var context = this, args = arguments;
+            var later = function () {
+                timeout = null;
+                if (!immediate) func.apply(context, args);
+            };
+            var callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) func.apply(context, args);
+        };
+    }
+
+    function manageMobileView() {
+        if (woosmap.$(document).width() >= mobileBreakPoint) {
+            woosmap.$("#sidebar").prepend(woosmap.$("#search-container"));
+        } else {
+            woosmap.$("#my-map-container").prepend(woosmap.$("#search-container"));
+        }
+    }
 
     function renderPhoto(cell, selector, photosSrc, rootPath) {
         woosmap.$(cell).find(selector + " img").each(function (index) {
@@ -234,12 +259,16 @@
             selectedStoreObj = new woosmap.utils.MVCObject();
             selectedStoreObj.selectedStore = null;
             selectedStoreObj.bindTo('selectedStore', mapView, 'selectedStore', false);
+            woosmap.$(window).resize(debounce(() => {
+                manageMobileView();
+            }, 250, false));
         });
         let localitiesWidget = new woosmapsave.localities.Autocomplete('search-input', localitiesOptions);
         localitiesWidget.addListener('selected_locality', () => {
             let locality = localitiesWidget.getSelectedLocality();
             search(locality.location);
         });
+        manageMobileView();
     }
 
     if (window.attachEvent) {
