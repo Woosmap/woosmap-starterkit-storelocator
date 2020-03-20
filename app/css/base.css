@@ -17,7 +17,7 @@ body {
     display: flex;
     flex-direction: column;
     flex-grow: 0;
-    height: 65vh;
+    height: 60vh;
     position: relative;
 }
 

@@ -106,9 +106,13 @@
     function manageMobileView() {
         if (currentWidth !== woosmap.$(window).width()) {
             if (woosmap.$(document).width() >= mobileBreakPoint) {
-                woosmap.$("#sidebar").prepend(woosmap.$("#search-container"));
+                if (!woosmap.$("#search-container").parent("#sidebar").length) {
+                    woosmap.$("#sidebar").prepend(woosmap.$("#search-container"));
+                }
             } else {
-                woosmap.$("#my-map-container").prepend(woosmap.$("#search-container"));
+                if (!woosmap.$("#search-container").parent("#my-map-container").length) {
+                    woosmap.$("#my-map-container").prepend(woosmap.$("#search-container"));
+                }
             }
             currentWidth = woosmap.$(window).width();
         }
@@ -251,6 +255,7 @@
     }
 
     function woosmap_main() {
+        manageMobileView();
         const loader = new woosmap.MapsLoader(googleLoadOptions);
         loader.load(function () {
             map = new google.maps.Map(woosmap.$('#my-map')[0], googleMapsOptions);
@@ -273,7 +278,6 @@
             let locality = localitiesWidget.getSelectedLocality();
             search(locality.location);
         });
-        manageMobileView();
     }
 
     if (window.attachEvent) {
