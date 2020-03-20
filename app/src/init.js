@@ -266,9 +266,9 @@
             currentWidth = woosmap.$(window).width();
             woosmap.$(window).resize(debounce(() => {
                 manageMobileView();
-            }, 250, false));
+            }, 150, false));
         });
-        let localitiesWidget = new woosmapsave.localities.Autocomplete('search-input', localitiesOptions);
+        let localitiesWidget = new woosmapCopy.localities.Autocomplete('search-input', localitiesOptions);
         localitiesWidget.addListener('selected_locality', () => {
             let locality = localitiesWidget.getSelectedLocality();
             search(locality.location);
