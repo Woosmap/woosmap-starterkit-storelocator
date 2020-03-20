@@ -1,6 +1,6 @@
 (function () {
     const meterToYard = 1.09361;
-    const unitSystem = 'metric'; // or 'metric'
+    const unitSystem = 'metric'; // or 'imperial'
     const mobileBreakPoint = 900;
     let currentWidth = 0;
 
