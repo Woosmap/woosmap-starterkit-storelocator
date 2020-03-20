@@ -1,6 +1,9 @@
 (function () {
+    const meterToYard = 1.09361;
+    const unitSystem = 'metric'; // or 'metric'
     const mobileBreakPoint = 900;
     let currentWidth = 0;
+
     const woosmapLoadOptions = {
         version: '1.4',
         publicKey: 'starbucks-demo-woos', //replace with your public key
@@ -78,10 +81,12 @@
         "</ul></div>" +
         "</div>";
 
-    const summaryStoreTemplate = "<div class='controls store-card'>" +
-        "<div><div><strong>{{name}} - {{address.city}}</strong></div>" +
+    const summaryStoreTemplate = "<div class='controls store-card'><div>" +
+        "<div><strong>{{name}} - {{address.city}}</strong></div>" +
         "<div><div id='store-address'>{{address.lines}} {{address.city}} {{address.zip}}</div>" +
-        "{{#contact.phone}}<div>Tel : <a href='tel:{{contact.phone}}'>{{contact.phone}}</a></div>{{/contact.phone}}</div></div>" +
+        "{{#contact.phone}}<div>Tel : <a href='tel:{{contact.phone}}'>{{contact.phone}}</a></div>{{/contact.phone}}" +
+        "<div class='store-distance'>{{storeDistance}}</div>" +
+        "</div></div>" +
         "<div class='store-photo'><img src='./images/default.svg'/></div></div>";
 
 
@@ -101,6 +106,22 @@
             timeout = setTimeout(later, wait);
             if (callNow) func.apply(context, args);
         };
+    }
+
+    function getReadableDistance(distance) {
+        const value = {
+            'metric': {unit: 'km', smallUnit: 'm', factor: 1000},
+            'imperial': {unit: 'mi', smallUnit: 'yd', factor: 1760}
+        };
+        const system = value[unitSystem];
+        if (unitSystem === 'imperial') {
+            distance *= meterToYard;
+        }
+        if (distance < system.factor) {
+            return Math.round(distance) + '\u00A0' + system.smallUnit;
+        } else {
+            return parseFloat((distance / system.factor).toFixed(1)) + '\u00A0' + system.unit;
+        }
     }
 
     function manageMobileView() {
@@ -198,6 +219,7 @@
 
     function getSummaryRenderedTemplate(store) {
         const templateRenderer = new woosmap.TemplateRenderer(summaryStoreTemplate);
+        store.properties.storeDistance = store.properties.distance ? getReadableDistance(store.properties.distance) : "";
         return templateRenderer.render(store.properties);
     }
 
