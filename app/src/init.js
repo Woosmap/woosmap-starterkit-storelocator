@@ -1,5 +1,6 @@
 (function () {
     const mobileBreakPoint = 900;
+    let currentWidth = 0;
     const woosmapLoadOptions = {
         version: '1.4',
         publicKey: 'starbucks-demo-woos', //replace with your public key
@@ -103,10 +104,13 @@
     }
 
     function manageMobileView() {
-        if (woosmap.$(document).width() >= mobileBreakPoint) {
-            woosmap.$("#sidebar").prepend(woosmap.$("#search-container"));
-        } else {
-            woosmap.$("#my-map-container").prepend(woosmap.$("#search-container"));
+        if (currentWidth !== woosmap.$(window).width()) {
+            if (woosmap.$(document).width() >= mobileBreakPoint) {
+                woosmap.$("#sidebar").prepend(woosmap.$("#search-container"));
+            } else {
+                woosmap.$("#my-map-container").prepend(woosmap.$("#search-container"));
+            }
+            currentWidth = woosmap.$(window).width();
         }
     }
 
@@ -259,6 +263,7 @@
             selectedStoreObj = new woosmap.utils.MVCObject();
             selectedStoreObj.selectedStore = null;
             selectedStoreObj.bindTo('selectedStore', mapView, 'selectedStore', false);
+            currentWidth = woosmap.$(window).width();
             woosmap.$(window).resize(debounce(() => {
                 manageMobileView();
             }, 250, false));
