@@ -22,7 +22,7 @@ jobs:
       - run: npm run build
       - deploy:
           name: Deploy to S3 if branch is Master
-          command: aws s3 sync build s3://demo.woosmap.com/storelocator/ --region eu-central-1 --acl public-read
+          command: aws s3 sync dist s3://demo.woosmap.com/storelocator/ --region eu-central-1 --acl public-read
 
 workflows:
   version: 2
