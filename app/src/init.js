@@ -269,7 +269,7 @@
                 storesByPage: 9
             });
             dataSource.searchStoresByParameters(searchParams, function (stores) {
-                mapView.set('location', location); //need the location to be set before the 'stores'
+                mapView.set('location', location); //The 'location' need to be set before the 'stores'
                 mapView.set('stores', stores.features);
                 buildTableView(stores.features);
             });
