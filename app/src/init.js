@@ -271,6 +271,7 @@
             dataSource.searchStoresByParameters(searchParams, function (stores) {
                 mapView.set('stores', stores.features);
                 mapView.set('location', location);
+                mapView.fitBounds(mapView.getDataBounds().extend(location));
                 buildTableView(stores.features);
             });
         }
