@@ -295,7 +295,7 @@
                 manageMobileView();
             }, 150, false));
         });
-        let localitiesWidget = new woosmapCopy.localities.Autocomplete('search-input', localitiesOptions);
+        let localitiesWidget = new woosmap.localities.Autocomplete('search-input', localitiesOptions);
         localitiesWidget.addListener('selected_locality', () => {
             let locality = localitiesWidget.getSelectedLocality();
             search(locality.location);
