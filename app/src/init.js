@@ -12,9 +12,9 @@
     };
     const localitiesOptions = {
         components: {
-            "country": ["gb"]
+            //"country": ["gb"]
         },
-        language: "GB"
+        //language: "GB"
     };
     const googleLoadOptions = {
         key: "AIzaSyCOtRab6Lh2pNn7gYxvAqN5leETC24OXYQ",
@@ -70,21 +70,21 @@
         "<div class='store-photo-header'><img /><div id='back-to-results'></div></div>" +
         "<div class='selected-store-card'><div class='hero'>" +
         "<div class='store-title'>{{name}}</div>" +
-        "<div class='store-opened'>{{openlabel}}</div></div>" +
-        "<div class='content'><div class='store-address'>{{address.lines}} {{address.city}} {{address.zip}}</div>" +
-        "{{#contact.phone}}<div class='store-contact'>Tel : <a href='tel:{{contact.phone}}'>{{contact.phone}}</a></div>{{/contact.phone}}" +
-        "<div class='store-link-page'><a href='https://google.fr/?storeId={{store_id}}' target='_blank'>Go to Store Page</a></div>" +
+        "{{#openlabel}}<div class='store-opened'>{{openlabel}}</div></div>{{/openlabel}}" +
+        "<div class='content'><div class='store-address'>{{address.lines}} {{address.city}} {{address.zipcode}}</div>" +
+        "{{#contact.phone}}<div class='store-contact'><a href='tel:{{contact.phone}}'>{{contact.phone}}</a></div>{{/contact.phone}}" +
+        "<div class='store-direction-url'><a href='{{directionUrl}}' target='_blank'>Get Direction</a></div>" +
         "</div></div>" +
-        "<div class='store-opening-hours'><div id='store-opening-hours-header'>Opening times</div>" +
+        "{{#open}}<div class='store-opening-hours'><div id='store-opening-hours-header'>Opening times</div>" +
         "<ul id='store-opening-hours-list'>" +
         "{{#week}}<li><span class='day'>{{dayName}}</span><span class='hours'>{{hoursDay}}</span></li>{{/week}}" +
-        "</ul></div>" +
+        "</ul></div>{{/open}}" +
         "</div>";
 
     const summaryStoreTemplate = "<div class='controls store-card'><div>" +
         "<div><strong>{{name}} - {{address.city}}</strong></div>" +
-        "<div><div id='store-address'>{{address.lines}} {{address.city}} {{address.zip}}</div>" +
-        "{{#contact.phone}}<div>Tel : <a href='tel:{{contact.phone}}'>{{contact.phone}}</a></div>{{/contact.phone}}" +
+        "<div><div id='store-address'>{{address.lines}} {{address.city}} {{address.zipcode}}</div>" +
+        "{{#contact.phone}}<div  class='store-contact'><a href='tel:{{contact.phone}}'>{{contact.phone}}</a></div>{{/contact.phone}}" +
         "<div class='store-distance'>{{storeDistance}}</div>" +
         "</div></div>" +
         "<div class='store-photo'><img src='./images/default.svg'/></div></div>";
@@ -211,10 +211,19 @@
             if (weekly_opening[day].length === 0) {
                 hoursData.weekly_opening[day].hoursDay = "Closed"
             } else if (weekly_opening[day].hours) {
-                hoursData.weekly_opening[day - 1].hoursDay = concatenateStoreHours(weekly_opening[day].hours);
+                if (weekly_opening[day].hours.length === 0) {
+                    hoursData.weekly_opening[day - 1].hoursDay = "Closed"
+                } else {
+                    hoursData.weekly_opening[day - 1].hoursDay = concatenateStoreHours(weekly_opening[day].hours);
+                }
             }
         }
         return hoursData.weekly_opening;
+    }
+
+    function getDirectionGoogleMapsUrl(store) {
+        const rootMapUrl = "https://maps.google.com?daddr=[Starbucks],";
+        return rootMapUrl +`${store.address.lines[0]} ${store.address.city}`;
     }
 
     function getSummaryRenderedTemplate(store) {
@@ -225,8 +234,9 @@
 
     function getSelectedRenderedTemplate(store) {
         const templateRenderer = new woosmap.TemplateRenderer(selectedStoreTemplate);
-        store.properties.openlabel = (store.properties.open && store.properties.open.open_now) ? "Open Now" : "Close";
+        store.properties.openlabel = (store.properties.open && store.properties.open.open_now) ? "Open Now" : "Closed";
         store.properties.week = store.properties.weekly_opening ? generateOpeningHoursHTML(store.properties.weekly_opening) : {};
+        store.properties.directionUrl = getDirectionGoogleMapsUrl(store.properties);
         return templateRenderer.render(store.properties);
     }
 
