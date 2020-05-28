@@ -17,7 +17,7 @@
         //language: "GB"
     };
     const googleLoadOptions = {
-        key: "AIzaSyCOtRab6Lh2pNn7gYxvAqN5leETC24OXYQ",
+        key: "",
         language: "en",
         region: "GB",
         version: "3.39"
@@ -66,24 +66,42 @@
         },
         breakPoint: 10
     };
+    const servicesLabel = {
+        "wheelchair_access": "Wheelchair Access",
+        "in-store_wi-fi": "Wi-Fi",
+        "parking": "Parking",
+        "schedule_a_demo": "Demo",
+        "reserve_and_collect": "Reserve & Collect",
+        "delivery_and_installation_service": "Delivery & Installation",
+        "customised_solutions": "Customised Solutions",
+        "financing": "Financing",
+        "repair_service": "Repair Service",
+    };
+    const typesLabel = {
+    };
     const selectedStoreTemplate = "<div class='woosmap-tableview-cell'>" +
         "<div class='store-photo-header'><img /><div id='back-to-results'></div></div>" +
         "<div class='selected-store-card'><div class='hero'>" +
         "<div class='store-title'>{{name}}</div>" +
-        "{{#openlabel}}<div class='store-opened'>{{openlabel}}</div></div>{{/openlabel}}" +
+        "{{#types}}<div class='store-types'>{{types}}</div>{{/types}}" +
+        "{{#openlabel}}<div class='store-opened'>{{openlabel}}</div>{{/openlabel}}</div>" +
         "<div class='content'><div class='store-address'>{{address.lines}} {{address.city}} {{address.zipcode}}</div>" +
         "{{#contact.phone}}<div class='store-contact'><a href='tel:{{contact.phone}}'>{{contact.phone}}</a></div>{{/contact.phone}}" +
         "<div class='store-direction-url'><a href='{{directionUrl}}' target='_blank'>Get Direction</a></div>" +
         "</div></div>" +
-        "{{#open}}<div class='store-opening-hours'><div id='store-opening-hours-header'>Opening times</div>" +
-        "<ul id='store-opening-hours-list'>" +
+        "{{#open}}<div class='store-properties-list'><div class='store-properties-header'>Opening hours</div>" +
+        "<ul class='store-opening-hours-list'>" +
         "{{#week}}<li><span class='day'>{{dayName}}</span><span class='hours'>{{hoursDay}}</span></li>{{/week}}" +
         "</ul></div>{{/open}}" +
+        "{{#hasServices}}<div class='store-properties-list'><div class='store-properties-header'>Amenitites</div>" +
+        "<ul class='store-services-list'>" +
+        "{{#services}}<li><span class='{{service}}'>{{serviceLabel}}</span></li>{{/services}}" +
+        "</ul></div>{{/hasServices}}" +
         "</div>";
 
-    const summaryStoreTemplate = "<div class='controls store-card'><div>" +
+    const summaryStoreTemplate = "<div class='controls summary-store-card'><div>" +
         "<div><strong>{{name}} - {{address.city}}</strong></div>" +
-        "<div><div id='store-address'>{{address.lines}} {{address.city}} {{address.zipcode}}</div>" +
+        "<div><div class='store-address'>{{address.lines}} {{address.city}} {{address.zipcode}}</div>" +
         "{{#contact.phone}}<div  class='store-contact'><a href='tel:{{contact.phone}}'>{{contact.phone}}</a></div>{{/contact.phone}}" +
         "<div class='store-distance'>{{storeDistance}}</div>" +
         "</div></div>" +
@@ -221,9 +239,19 @@
         return hoursData.weekly_opening;
     }
 
+    function formatTagsAsArrayObjects(store) {
+        let services = [];
+        for (let i = 0; i < store.properties.tags.length; ++i) {
+            services[i] = {
+                service: store.properties.tags[i]
+            };
+        }
+        return services
+    }
+
     function getDirectionGoogleMapsUrl(store) {
         const rootMapUrl = "https://maps.google.com?daddr=[Starbucks],";
-        return rootMapUrl +`${store.address.lines[0]} ${store.address.city}`;
+        return rootMapUrl + `${store.address.lines[0]} ${store.address.city}`;
     }
 
     function getSummaryRenderedTemplate(store) {
@@ -234,8 +262,15 @@
 
     function getSelectedRenderedTemplate(store) {
         const templateRenderer = new woosmap.TemplateRenderer(selectedStoreTemplate);
-        store.properties.openlabel = (store.properties.open && store.properties.open.open_now) ? "Open Now" : "Closed";
+        store.properties.openlabel = (store.properties.open && store.properties.open.open_now) ? "Open now" : "Closed";
         store.properties.week = store.properties.weekly_opening ? generateOpeningHoursHTML(store.properties.weekly_opening) : {};
+        if (store.properties.tags.length > 0) {
+            store.properties.services = store.properties.tags.map(value => ({
+                'service': value,
+                'serviceLabel': servicesLabel[value] ? servicesLabel[value] : value
+            }));
+            store.properties.hasServices = true;
+        }
         store.properties.directionUrl = getDirectionGoogleMapsUrl(store.properties);
         return templateRenderer.render(store.properties);
     }

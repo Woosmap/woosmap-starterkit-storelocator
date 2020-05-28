@@ -81,7 +81,7 @@ body {
     #sidebar-container {
         flex-basis: 35vw;
         min-width: 400px !important;
-        max-width: 550px !important;
+        max-width: 520px !important;
         order: 1;
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
         -webkit-box-flex: 0;
@@ -132,19 +132,25 @@ body {
     padding-top: 10%;
 }
 
+.store-address {
+    line-height: 1.6rem;
+}
+
 .store-address, .store-direction-url a,
 .store-contact a {
     padding: .2em 0;
+    margin-left: 20px;
     color: #1D1D1D;
 }
 
 .store-direction-url a::before,
-.store-contact a::before, .store-address::before {
+.store-contact a::before, .selected-store-card .store-address::before {
     content: "";
     background-size: 16px 16px;
     background-repeat: no-repeat;
     padding-right: 20px;
     vertical-align: middle;
+    margin-left: -20px;
 }
 
 .store-direction-url a::before {
@@ -155,7 +161,7 @@ body {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 0 24 24' width='24'%3E%3Cpath d='M0 0h24v24H0V0z' fill='none'/%3E%3Cpath d='M6.54 5c.06.89.21 1.76.45 2.59l-1.2 1.2c-.41-1.2-.67-2.47-.76-3.79h1.51m9.86 12.02c.85.24 1.72.39 2.6.45v1.49c-1.32-.09-2.59-.35-3.8-.75l1.2-1.19M7.5 3H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.49c0-.55-.45-1-1-1-1.24 0-2.45-.2-3.57-.57-.1-.04-.21-.05-.31-.05-.26 0-.51.1-.71.29l-2.2 2.2c-2.83-1.45-5.15-3.76-6.59-6.59l2.2-2.2c.28-.28.36-.67.25-1.02C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1z'/%3E%3C/svg%3E");
 }
 
-.store-address::before {
+.selected-store-card .store-address::before {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 0 24 24' width='24'%3E%3Cpath d='M0 0h24v24H0V0z' fill='none'/%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zM7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 2.88-2.88 7.19-5 9.88C9.92 16.21 7 11.85 7 9z'/%3E%3Ccircle cx='12' cy='9' r='2.5'/%3E%3C/svg%3E");
 }
 
@@ -177,9 +183,7 @@ body {
 }
 
 .selected-store-card .hero {
-    background: #006341;
     padding: .8rem 1.4rem;
-    color: #FFF;
 }
 
 .selected-store-card .store-title {
@@ -188,7 +192,7 @@ body {
 
 
 .selected-store-card .content {
-    padding: .8rem 1.4rem;
+    padding: 0 1.4rem .8rem;
     color: #1D1D1D;
 }
 
@@ -203,7 +207,7 @@ body {
     position: absolute;
 }
 
-.store-card {
+.summary-store-card {
     font-size: 15px;
     padding: .8rem 1.3rem;
     cursor: pointer;
@@ -212,7 +216,7 @@ body {
     border-bottom: 1px solid rgba(0, 0, 0, .08);
 }
 
-.store-card:hover {
+.summary-store-card:hover {
     background: #f0f0f0;
 }
 
@@ -293,7 +297,7 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
     padding-left: 1.3em;
     font-size: .8em;
     background: rgba(255, 255, 255, 0.75);
-    color: #006440;
+    color: #1D1D1D;
     cursor: pointer;
 }
 
@@ -376,51 +380,61 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
     direction: ltr;
     display: block;
     width: 100%;
-    height: 250px;
-    background: #006341
+    height: 270px;
+    background: rgba(0, 0, 0, 0.54);
 }
 
 .store-photo-header img {
     width: 100%;
 }
 
-#store-address {
+.summary-store-card .store-address {
     color: #8e8e8e;
     line-height: 1.5em;
 }
 
-.store-opening-hours {
+.store-types {
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.store-properties-list {
     padding: 0 1.4rem;
+    margin-bottom: 1.5rem;
 }
 
-#store-opening-hours-header {
+.store-properties-header {
     border-bottom: 1px solid #E4E6E7;
-    padding: .8rem 0;
+    padding: .5rem 0 .2rem;
     line-height: 20px;
+    font-size: .85rem;
+    color: #777777;
+    font-weight: 600;
+    text-transform: uppercase;
 }
 
-.store-opening-hours ul {
+.store-properties-list ul {
     display: flex;
     flex-direction: column;
     list-style: none;
     padding: 0;
     width: 100%;
+    margin-top: .5rem;
 }
 
-.store-opening-hours ul li {
+.store-properties-list ul li {
     display: flex;
     padding: 5px 0;
     justify-content: space-between;
     max-width: 280px;
 }
 
-.store-opening-hours ul li {
+.store-properties-list ul li {
     flex: 1;
     margin-right: 10px;
     position: relative;
 }
 
-.store-opening-hours ul li img {
+.store-properties-list ul li img {
     width: 100%;
 }
 
@@ -444,5 +458,5 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
     width: 24px;
     background-color: #FFF;
     z-index: 1;
-    margin-top: 0px
+    margin-top: 0;
 }
