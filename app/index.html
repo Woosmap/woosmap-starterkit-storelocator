@@ -28,15 +28,46 @@
         <div id="sidebar-container">
             <div id="sidebar">
                 <div id="search-container">
-                    <div class="controls">
+                    <div class="controls search-wrapper">
                         <input id="search-input" type="search" placeholder="Search for Postcode Or Locality..."
                                autocomplete="off" role="combobox">
+                        <div class="search-controls">
+                            <div class="search-control-filter">
+                                <button id="filters-btn" aria-label="Filter">
+                                    <div class="filters-button"></div>
+                                    <span class="filter-label">Filter</span>
+                                </button>
+                                <button id="opennow-btn" aria-label="Open Now">
+                                    <span class="filter-label">Open Now</span>
+                                </button>
+                                <button id="reset-btn" aria-label="Reset">
+                                    <div class="reset-button"></div>
+                                    <span class="filter-label">Reset</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <section id="listing-stores-container" class="home">
                 </section>
                 <section id="selected-store-container">
                 </section>
+            </div>
+            <div id="filters-panel" class="animated fadeOutDown">
+                <button aria-label="Hide options for filtering store results"
+                        id="close-btn">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"
+                         style="width: 24px; height: 24px; overflow: visible;">
+                        <path d="M13.06 12l5.72-5.72c.292-.292.292-.767 0-1.06-.294-.293-.768-.293-1.06 0L12 10.94 6.28 5.22c-.293-.293-.767-.293-1.06 0-.293.293-.293.768 0 1.06L10.94 12l-5.72 5.72c-.293.292-.293.767 0 1.06.146.146.338.22.53.22s.384-.074.53-.22L12 13.06l5.72 5.72c.145.146.337.22.53.22.19 0 .383-.074.53-.22.292-.293.292-.768 0-1.06L13.06 12z"></path>
+                        <circle fill="transparent" cx="50%" cy="50%" r="75%"></circle>
+                    </svg>
+                </button>
+                <div>
+                    <div><h2> Filters</h2>
+                        <div class="filters-list">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
