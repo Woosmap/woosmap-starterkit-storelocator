@@ -373,7 +373,7 @@
                 centerAndZoom(storeData);
                 selectedStoreObj.set('selectedStore', storeData);
                 const selectedStoreHTML = getSelectedRenderedTemplate(storeData);
-                markerHover.setMap(null);
+                woosmap.$(this).trigger('mouseleave');
                 toggleAndSlideTableview(selectedStoreHTML);
             });
             $cell.mouseenter(function () {
