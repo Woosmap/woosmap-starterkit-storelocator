@@ -3,6 +3,7 @@
     const unitSystem = 'metric'; // or 'imperial'
     const mobileBreakPoint = 900;
     let currentWidth = 0;
+    const minZoomLevelStore = 12;
 
     const woosmapLoadOptions = {
         version: '1.4',
@@ -223,6 +224,15 @@
         });
     }
 
+    function centerAndZoom(store) {
+        if (map.getZoom() < minZoomLevelStore) {
+            woosmap.maps.utils.centerAndZoom(map, {
+                lat: store.geometry.coordinates[1],
+                lng: store.geometry.coordinates[0]
+            }, minZoomLevelStore);
+        }
+    }
+
     function clearMapSelectedStore() {
         mapView.set('selectedStore', null);
     }
@@ -362,6 +372,7 @@
             $cell.data('store', stores[store]);
             $cell.click(function () {
                 const storeData = woosmap.$(this).data('store');
+                centerAndZoom(storeData);
                 selectedStoreObj.set('selectedStore', storeData);
                 const selectedStoreHTML = getSelectedRenderedTemplate(storeData);
                 toggleAndSlideTableview(selectedStoreHTML);
@@ -384,6 +395,7 @@
             const selectedStore = this.get('selectedStore');
             if (selectedStore) {
                 const selectedStoreHTML = getSelectedRenderedTemplate(selectedStore, selectedStoreTemplate);
+                centerAndZoom(selectedStore);
                 toggleAndSlideTableview(selectedStoreHTML)
             }
         };
