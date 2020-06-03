@@ -81,7 +81,7 @@
     ];
 
     const selectedStoreTemplate = "<div class='woosmap-tableview-cell'>" +
-        "<div class='store-photo-header'><img /><div id='back-to-results'></div></div>" +
+        "<div class='store-photo-header'><div id='back-to-results'></div></div>" +
         "<div class='selected-store-card'><div class='hero'>" +
         "<div class='store-title'>{{name}}</div>" +
         "{{#types}}<div class='store-types'>{{types}}</div>{{/types}}" +
@@ -178,9 +178,7 @@
     }
 
     function renderPhoto(cell, selector, photosSrc, rootPath) {
-        woosmap.$(cell).find(selector + " img").each(function (index) {
-            woosmap.$(this).attr("src", rootPath + photosSrc[Math.floor(Math.random() * photosSrc.length)]);
-        });
+        woosmap.$(cell).find(selector).css('background-image', 'url(' + rootPath + photosSrc[Math.floor(Math.random() * photosSrc.length)] + ')');
     }
 
     function toggleAndSlideTableview(selectedStoreCell) {
