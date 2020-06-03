@@ -514,7 +514,7 @@ button:hover {
 }
 
 .store-opened {
-    color: #777777;
+    font-weight: 600;
 }
 
 .store-types {

@@ -494,6 +494,7 @@
         let localitiesWidget = new woosmap.localities.Autocomplete('search-input', localitiesOptions);
         localitiesWidget.addListener('selected_locality', () => {
             let locality = localitiesWidget.getSelectedLocality();
+            woosmap.$('#aroundme-btn').removeClass();
             search(locality.location);
         });
     }
