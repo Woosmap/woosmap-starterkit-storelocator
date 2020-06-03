@@ -60,8 +60,8 @@
         },
         tileStyle: {
             color: '#008248',
-            size: 10,
-            minSize: 6
+            size: 15,
+            minSize: 4
         },
         breakPoint: 12
     };
