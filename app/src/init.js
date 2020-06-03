@@ -238,7 +238,6 @@
         woosmap.$.each(woosmap.$('.filters-list .active-filter'), function (index, object) {
             fields.push(q.F('tag', woosmap.$(object).data('servicekey')));
         });
-        console.log(fields);
         if (fields.length > 0)
             searchQuery = q.and(fields);
         mapView.setSearchParameters(new woosmap.search.SearchParameters({query: searchQuery}));
