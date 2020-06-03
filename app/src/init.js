@@ -238,6 +238,7 @@
         woosmap.$.each(woosmap.$('.filters-list .active-filter'), function (index, object) {
             fields.push(q.F('tag', woosmap.$(object).data('servicekey')));
         });
+        console.log(fields);
         if (fields.length > 0)
             searchQuery = q.and(fields);
         mapView.setSearchParameters(new woosmap.search.SearchParameters({query: searchQuery}));
@@ -321,6 +322,15 @@
         return templateRenderer.render(store.properties);
     }
 
+    function clearActiveFilters() {
+        woosmap.$('.filters-list li').removeClass('active-filter');
+        woosmap.$('#filters-btn').removeClass('active');
+        woosmap.$("#filters-btn .filter-label").text("Filter");
+        woosmap.$('#aroundme-btn').removeClass();
+        woosmap.$('#opennow-btn').removeClass();
+        filterByTags();
+    }
+
     function buildFiltersView() {
         const templateRenderer = new woosmap.TemplateRenderer(filtersTagTemplate);
         woosmap.$('.filters-list').append(templateRenderer.render({availableServices: availableServices}));
@@ -381,6 +391,41 @@
         storeObj.bindTo('selectedStore', mapView, false);
     }
 
+    function getHTML5Position() {
+        navigator.geolocation.getCurrentPosition(function (position) {
+                search({
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                });
+                woosmap.$('#aroundme-btn').removeClass().addClass('active');
+            },
+            function (error) {
+                woosmap.$('#aroundme-btn').removeClass();
+            });
+    }
+
+    function geolocateUser() {
+        woosmap.$.ajax({
+            url: 'https://api.woosmap.com/geolocation/position/',
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                key: woosmapLoadOptions.publicKey
+            },
+            success: function (position) {
+                if (position.accuracy > 100) {
+                    getHTML5Position();
+                } else {
+                    search({lat: position.latitude, lng: position.longitude});
+                    woosmap.$('#aroundme-btn').removeClass().addClass('active');
+                }
+            },
+            error: function () {
+                woosmap.$('#aroundme-btn').removeClass()
+            }
+        });
+    }
+
     function search(location) {
         if (location) {
             const searchParams = new woosmap.search.SearchParameters({
@@ -437,6 +482,12 @@
                 clearMapSelectedStore();
                 mapView.set('location', null);
                 mapView.set('stores', null);
+                clearActiveFilters();
+
+            });
+            woosmap.$('#aroundme-btn').click(function () {
+                woosmap.$('#aroundme-btn').toggleClass('loading');
+                geolocateUser();
             });
             buildFiltersView();
         });
