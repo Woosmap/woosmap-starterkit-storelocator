@@ -32,7 +32,7 @@
         fullscreenControl: false,
         styles: [
             {
-                featureType: 'poi.business',
+                featureType: 'poi',
                 stylers: [{visibility: 'off'}]
             },
             {
@@ -43,7 +43,6 @@
         ]
     };
     const woosmapOptions = {
-        gentleCenter: true,
         style: {
             'default': {
                 'icon': {
@@ -69,13 +68,14 @@
                 }
             }
         },
-        paddedStoreCenter: true,
         tileStyle: {
             color: '#008248',
             size: 15,
             minSize: 4
         },
-        breakPoint: 12
+        breakPoint: 12,
+        padding: {left: 50, right: 50, bottom: 50, top: 50},
+
     };
 
     const availableServices = [
@@ -129,7 +129,7 @@
         "</div></button></li>{{/availableServices}}" +
         "</ul>"
 
-    let map, mapView, dataSource, selectedStoreObj, markerHover = null;
+    let map, mapView, dataSource, selectedStoreObj, currentStoreId, markerHover = null;
     let searchQuery = '';
     const photosSrcFull = ["1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg", "11.jpg", "12.jpg", "13.jpg", "14.jpg", "15.jpg", "16.jpg", "17.jpg", "18.jpg", "19.jpg", "20.jpg", "21.jpg", "22.jpg", "23.jpg"];
 
@@ -178,11 +178,13 @@
                 if (!woosmap.$("#search-container").parent("#sidebar").length) {
                     woosmap.$("#sidebar").prepend(woosmap.$("#search-container"));
                     woosmap.$("#search-container").removeClass("mobile");
+                    woosmapOptions.padding.top = 50;
                 }
             } else {
                 if (!woosmap.$("#search-container").parent("#my-map-container").length) {
                     woosmap.$("#my-map-container").prepend(woosmap.$("#search-container"));
                     woosmap.$("#search-container").addClass("mobile");
+                    woosmapOptions.padding.top = 100;
                 }
             }
             currentWidth = woosmap.$(window).width();
@@ -240,6 +242,12 @@
                 lat: store.geometry.coordinates[1],
                 lng: store.geometry.coordinates[0]
             }, minZoomLevelStore);
+        } else {
+            mapView.panTo({
+                    lat: store.geometry.coordinates[1],
+                    lng: store.geometry.coordinates[0]
+                },
+                woosmapOptions.padding);
         }
     }
 
@@ -381,6 +389,7 @@
             $cell.append(getSummaryRenderedTemplate(stores[store]));
             $cell.data('store', stores[store]);
             $cell.click(function () {
+                markerHover.setMap(null);
                 const storeData = woosmap.$(this).data('store');
                 centerAndZoom(storeData);
                 selectedStoreObj.set('selectedStore', storeData);
@@ -399,17 +408,16 @@
         toggleAndSlideTableview();
     }
 
-    function registerMapClickEvent(mapView) {
-        let storeObj = new woosmap.utils.MVCObject();
-        storeObj.selectedStore_changed = function () {
+    function registerMapClickEvent() {
+        selectedStoreObj.selectedStore_changed = function () {
             const selectedStore = this.get('selectedStore');
-            if (selectedStore) {
+            if (selectedStore && selectedStore.properties.store_id !== currentStoreId) {
+                currentStoreId = selectedStore.properties.store_id;
                 const selectedStoreHTML = getSelectedRenderedTemplate(selectedStore, selectedStoreTemplate);
                 centerAndZoom(selectedStore);
                 toggleAndSlideTableview(selectedStoreHTML)
             }
         };
-        storeObj.bindTo('selectedStore', mapView, false);
     }
 
     function getHTML5Position() {
@@ -476,13 +484,16 @@
         loader.load(function () {
             map = new google.maps.Map(woosmap.$('#my-map')[0], googleMapsOptions);
             mapView = new woosmap.TiledView(map, woosmapOptions);
+            mapView.enablePan(false);
+            mapView.enableZoom(false);
+            mapView.enablePaddedStoreCenter(true);
             mapView.marker.setOptions({
                 icon: {url: 'https://www.woosmap.com/assets/locationanimation.svg'}
             });
             dataSource = new woosmap.DataSource();
-            registerMapClickEvent(mapView);
             selectedStoreObj = new woosmap.utils.MVCObject();
             selectedStoreObj.selectedStore = null;
+            registerMapClickEvent(mapView);
             selectedStoreObj.bindTo('selectedStore', mapView, 'selectedStore', false);
             currentWidth = woosmap.$(window).width();
             woosmap.$(window).resize(debounce(() => {

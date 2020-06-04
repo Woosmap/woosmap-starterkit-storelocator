@@ -119,6 +119,12 @@ body {
     border-bottom: none
 }
 
+#search-container.mobile .search-controls {
+    position: absolute;
+    top: 45px;
+}
+
+
 #search-container.mobile button {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 -1px 0 rgba(0, 0, 0, 0.02);
     border: none;
