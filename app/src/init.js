@@ -411,6 +411,9 @@
     function registerMapClickEvent() {
         selectedStoreObj.selectedStore_changed = function () {
             const selectedStore = this.get('selectedStore');
+            if (!selectedStore) {
+                currentStoreId = null;
+            }
             if (selectedStore && selectedStore.properties.store_id !== currentStoreId) {
                 currentStoreId = selectedStore.properties.store_id;
                 const selectedStoreHTML = getSelectedRenderedTemplate(selectedStore, selectedStoreTemplate);
