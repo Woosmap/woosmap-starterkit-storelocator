@@ -27,9 +27,20 @@
             lng: 2
         },
         zoom: 4,
-        scrollwheel: false,
+        scrollwheel: true,
         mapTypeControl: false,
-        fullscreenControl: false
+        fullscreenControl: false,
+        styles: [
+            {
+                featureType: 'poi.business',
+                stylers: [{visibility: 'off'}]
+            },
+            {
+                featureType: 'transit',
+                elementType: 'labels.icon',
+                stylers: [{visibility: 'off'}]
+            }
+        ]
     };
     const woosmapOptions = {
         gentleCenter: true,
@@ -58,6 +69,7 @@
                 }
             }
         },
+        paddedStoreCenter: true,
         tileStyle: {
             color: '#008248',
             size: 15,
@@ -373,7 +385,6 @@
                 centerAndZoom(storeData);
                 selectedStoreObj.set('selectedStore', storeData);
                 const selectedStoreHTML = getSelectedRenderedTemplate(storeData);
-                woosmap.$(this).trigger('mouseleave');
                 toggleAndSlideTableview(selectedStoreHTML);
             });
             $cell.mouseenter(function () {
@@ -493,7 +504,6 @@
                 mapView.set('location', null);
                 mapView.set('stores', null);
                 clearActiveFilters();
-
             });
             woosmap.$('#aroundme-btn').click(function () {
                 woosmap.$('#aroundme-btn').toggleClass('loading');
