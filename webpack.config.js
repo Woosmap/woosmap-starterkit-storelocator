@@ -26,6 +26,16 @@ module.exports = {
                     }
                 }, 'css-loader'],
             },
+            {
+                test: /\.m?js$/,
+                exclude: /(node_modules)/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env']
+                    }
+                }
+            }
         ],
     },
     entry: ['./app/src/init.js', './app/css/base.css', './app/css/effect.css', './app/css/theme.css'],
