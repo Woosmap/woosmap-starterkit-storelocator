@@ -457,6 +457,7 @@
 
     function search(location) {
         if (location) {
+            clearMapSelectedStore();
             const searchParams = new woosmap.search.SearchParameters({
                 lat: location.lat,
                 lng: location.lng,
