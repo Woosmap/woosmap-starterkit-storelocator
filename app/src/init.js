@@ -393,8 +393,6 @@
                 const storeData = woosmap.$(this).data('store');
                 centerAndZoom(storeData);
                 selectedStoreObj.set('selectedStore', storeData);
-                const selectedStoreHTML = getSelectedRenderedTemplate(storeData);
-                toggleAndSlideTableview(selectedStoreHTML);
             });
             $cell.mouseenter(function () {
                 const storeData = woosmap.$(this).data('store');
