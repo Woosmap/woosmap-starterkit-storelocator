@@ -277,7 +277,7 @@
         let hoursText = "";
         let end = "";
         for (let slice in openHours) {
-            if ('all-day' in openHours[slice]) {
+            if ('all-day' in openHours[slice] || (openHours[slice].end === '00:00' && openHours[slice].start === '00:00')) {
                 return "24h/24";
             }
             end = openHours[slice].end;
