@@ -353,6 +353,7 @@
         woosmap.$('.filters-list li').removeClass('active-filter');
         woosmap.$('#filters-btn').removeClass('active');
         woosmap.$("#filters-btn .filter-label").text("Filter");
+        woosmap.$("#aroundme-btn .filter-label").text("Geolocate");
         woosmap.$('#aroundme-btn').removeClass();
         woosmap.$('#opennow-btn').removeClass();
         filterByTags();
@@ -448,6 +449,9 @@
                 } else {
                     search({lat: position.latitude, lng: position.longitude});
                     woosmap.$('#aroundme-btn').removeClass().addClass('active');
+                    if (position.city) {
+                        woosmap.$('#aroundme-btn .filter-label').text(position.city);
+                    }
                 }
             },
             error: function () {
@@ -528,6 +532,7 @@
         localitiesWidget.addListener('selected_locality', () => {
             let locality = localitiesWidget.getSelectedLocality();
             woosmap.$('#aroundme-btn').removeClass();
+            woosmap.$('#aroundme-btn .filter-label').text("Geolocate");
             search(locality.location);
         });
     }
