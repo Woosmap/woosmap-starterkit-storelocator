@@ -149,8 +149,8 @@ body {
 
     #sidebar-container {
         flex-basis: 35vw;
-        min-width: 410px !important;
-        max-width: 520px !important;
+        min-width: 400px !important;
+        max-width: 500px !important;
         order: 1;
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
         -webkit-box-flex: 0;
