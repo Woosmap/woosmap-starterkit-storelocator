@@ -1,7 +1,7 @@
 (function () {
     const meterToYard = 1.09361;
     const unitSystem = 'metric'; // or 'imperial'
-    const mobileBreakPoint = 900;
+    const mobileBreakPoint = 750;
     let currentWidth = 0;
     const minZoomLevelStore = 12;
 
