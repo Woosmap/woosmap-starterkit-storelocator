@@ -177,13 +177,13 @@
             if (woosmap.$(document).width() >= mobileBreakPoint) {
                 if (!woosmap.$("#search-container").parent("#sidebar").length) {
                     woosmap.$("#sidebar").prepend(woosmap.$("#search-container"));
-                    woosmap.$("#search-container").removeClass("mobile");
+                    woosmap.$("body").removeClass("mobile");
                     woosmapOptions.padding.top = 50;
                 }
             } else {
                 if (!woosmap.$("#search-container").parent("#my-map-container").length) {
                     woosmap.$("#my-map-container").prepend(woosmap.$("#search-container"));
-                    woosmap.$("#search-container").addClass("mobile");
+                    woosmap.$("body").addClass("mobile");
                     woosmapOptions.padding.top = 100;
                 }
             }
@@ -193,6 +193,18 @@
 
     function renderPhoto(cell, selector, photosSrc, rootPath) {
         woosmap.$(cell).find(selector).css('background-image', 'url(' + rootPath + photosSrc[Math.floor(Math.random() * photosSrc.length)] + ')');
+    }
+
+    function styleOnScroll() {
+        const $listingStores = woosmap.$('#listing-stores-container').not('.mobile #listing-stores-container');
+        $listingStores.scroll(function () {
+            var scroll = $listingStores.scrollTop();
+            if (scroll > 0) {
+                $listingStores.addClass("active");
+            } else {
+                $listingStores.removeClass("active");
+            }
+        });
     }
 
     function toggleAndSlideTableview(selectedStoreCell) {
@@ -527,6 +539,7 @@
                 geolocateUser();
             });
             buildFiltersView();
+            styleOnScroll();
         });
         let localitiesWidget = new woosmap.localities.Autocomplete('search-input', localitiesOptions);
         localitiesWidget.addListener('selected_locality', () => {
