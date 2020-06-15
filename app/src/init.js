@@ -92,8 +92,8 @@
         {serviceKey: 'CL', serviceName: 'Starbucks Reserve-Clover Brewed'},
     ];
 
-    const selectedStoreTemplate = "<div class='woosmap-tableview-cell'>" +
-        "<div class='store-photo-header'><div id='back-to-results'></div></div>" +
+    const selectedStoreTemplate = "<div class='woosmap-tableview-cell'><div class='screen-filter'></div>" +
+        "<div id='back-to-results'></div><div class='store-photo-header'></div>" +
         "<div class='selected-store-card'><div class='hero'>" +
         "<div class='store-title'>{{name}}</div>" +
         "{{#types}}<div class='store-types'>{{types}}</div>{{/types}}" +
@@ -215,7 +215,12 @@
             const $previousCell = $selectedStoreHTML.find(".woosmap-tableview-cell");
             if ($previousCell.length === 0) {
                 $listingStores.removeClass('animated fadeOutLeft fadeInLeft').addClass('animated fadeOutLeft');
-                $selectedStoreHTML.removeClass().addClass('animated fadeInRight');
+                if (!$selectedStoreHTML.hasClass("fadeInRight")) {
+                    $selectedStoreHTML.removeClass().addClass('animated fadeInRight');
+                    $selectedStoreHTML.one("animationend", function () {
+                        $selectedStoreHTML.removeClass('animated');
+                    });
+                }
             }
             woosmap.$('#search-container').addClass('selected-store');
             $selectedStoreHTML.show().html($selectedStoreCell);
