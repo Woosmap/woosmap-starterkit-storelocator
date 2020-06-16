@@ -141,7 +141,7 @@ body:not(.mobile) #search-container.selected-store #search-input {
     top: unset;
     right: 0;
     padding: 0.6em 1.5em;
-    border-radius: none;
+    border-radius: 0;
     box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.3);
     background: #F5F5F5;
 }
@@ -403,6 +403,15 @@ button:hover {
     top: 12px;
     z-index: 1;
     position: absolute;
+}
+.localities-container{
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 0 0 6px 6px;
+    margin-top: -3px;
+}
+.localities-container li:last-child{
+    border-radius: 0 0 6px 6px;
 }
 
 #search-input:focus, button:focus {
