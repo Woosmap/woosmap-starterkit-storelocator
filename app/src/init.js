@@ -77,6 +77,14 @@
         padding: {left: 50, right: 50, bottom: 50, top: 50},
 
     };
+    const distanceOptions = {
+        distanceapiUrl: 'https://api.woosmap.com/distance/distancematrix/json?',
+        units: 'metric',
+        mode: 'driving',
+        language: 'en',
+        elements: 'duration_distance',
+        key: 'woos-48c80350-88aa-333e-835a-07f4b658a9a4'
+    };
 
     const availableServices = [
         {serviceKey: 'WF', serviceName: 'Wireless Hotspot'},
@@ -342,7 +350,11 @@
 
     function getSummaryRenderedTemplate(store) {
         const templateRenderer = new woosmap.TemplateRenderer(summaryStoreTemplate);
-        store.properties.storeDistance = store.properties.distance ? getReadableDistance(store.properties.distance) : "";
+        if (store.properties.storeDistanceApi) {
+            store.properties.storeDistance = store.properties.storeDistanceApi;
+        } else {
+            store.properties.storeDistance = store.properties.distance ? getReadableDistance(store.properties.distance) : "";
+        }
         store.properties.name = store.properties.name.capitalize();
         return templateRenderer.render(store.properties);
     }
@@ -398,10 +410,50 @@
         });
     }
 
+    function updateStoresWithDistanceAPI(stores, callback) {
+        if (mapView.get('location') && stores && stores.length > 0) {
+            let destinations = stores.map((store) => {
+                return store.geometry.coordinates[1] + "," + store.geometry.coordinates[0]
+            });
+            woosmap.$.ajax({
+                url: distanceOptions.distanceapiUrl,
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                    origins: mapView.get('location').lat + "," + mapView.get('location').lng,
+                    destinations: destinations.join("|"),
+                    units: distanceOptions.units,
+                    mode: distanceOptions.mode,
+                    language: distanceOptions.language,
+                    elements: distanceOptions.elements,
+                    key: distanceOptions.key
+                },
+
+                success: function (response) {
+                    if (response.status === "OK") {
+                        const distanceObj = response.rows[0].elements;
+                        for (let i = 0; i < stores.length; i++) {
+                            if (distanceObj[i].status !== "ZERO_RESULTS" && distanceObj[i].status !== "NOT_FOUND") {
+                                stores[i].properties.storeDistanceApi = distanceObj[i].distance.text + " (" + distanceObj[i].duration.text + ")";
+                            }
+                        }
+                    }
+                    callback(stores);
+                }
+            });
+        } else {
+            callback(stores);
+        }
+    }
+
     function buildTableView(stores) {
         const $listingStores = woosmap.$('#listing-stores-container');
         $listingStores.empty();
-        stores.length > 0 ? woosmap.$('#main').addClass('stores-displayed') : woosmap.$('#main').removeClass('stores-displayed');
+        if (stores.length > 0) {
+            woosmap.$('#main').addClass('stores-displayed')
+        } else {
+            woosmap.$('#main').removeClass('stores-displayed');
+        }
         for (store in stores) {
             const $cell = woosmap.$(document.createElement('div'));
             $cell.append(getSummaryRenderedTemplate(stores[store]));
@@ -496,7 +548,9 @@
                     });
                 }
                 mapView.set('stores', stores.features);
-                buildTableView(stores.features);
+                updateStoresWithDistanceAPI(stores.features, function (stores_updated) {
+                    buildTableView(stores_updated);
+                },)
             });
         }
     }
