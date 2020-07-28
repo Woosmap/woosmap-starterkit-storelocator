@@ -79,7 +79,7 @@
     };
     const distanceOptions = {
         distanceapiUrl: 'https://api.woosmap.com/distance/distancematrix/json?',
-        units: 'metric',
+        units: unitSystem,
         mode: 'driving',
         language: 'en',
         elements: 'duration_distance',
