@@ -41,7 +41,7 @@ module.exports = {
     entry: ['./app/src/init.js', './app/css/base.css', './app/css/effect.css', './app/css/theme.css'],
     output: {
         path: path.resolve(__dirname, './dist'),
-        filename: 'storelocator.js'
+        filename: '[name].[hash].js'
     },
     mode: 'development',
     devServer: {
