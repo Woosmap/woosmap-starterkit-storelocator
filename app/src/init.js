@@ -203,6 +203,18 @@
         woosmap.$(cell).find(selector).css('background-image', 'url(' + rootPath + photosSrc[Math.floor(Math.random() * photosSrc.length)] + ')');
     }
 
+    function getURLParameter(name) {
+        return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
+    }
+
+    function initSearchParam() {
+        let location = getURLParameter('location');
+        if (location && location.split(",").length > 0) {
+            search({lat: location.split(",")[0], lng: location.split(",")[1]});
+        }
+    }
+
+
     function styleOnScroll() {
         const $listingStores = woosmap.$('#listing-stores-container').not('.mobile #listing-stores-container');
         $listingStores.scroll(function () {
@@ -599,6 +611,7 @@
             });
             buildFiltersView();
             styleOnScroll();
+            initSearchParam();
         });
         let localitiesWidget = new woosmap.localities.Autocomplete('search-input', localitiesOptions);
         localitiesWidget.addListener('selected_locality', () => {
