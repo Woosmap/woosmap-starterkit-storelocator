@@ -599,3 +599,11 @@ button:hover {
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
+
+.mapboxgl-canvas:focus{
+    outline: none;
+}
+
+#filters-btn{
+    display: none;
+}
