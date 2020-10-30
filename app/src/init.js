@@ -58,19 +58,11 @@
                 icon: {
                     url: './images/markers/marker-blank.png'
                 },
-            },
-            selectedIcon: {
-                icon: {
+                selectedIcon: {
                     url: './images/markers/yvesrocher-marker-selected.svg',
-                    scaledSize: {
-                        height: 34,
-                        width: 34
-                    },
-                },
+                }
             }
-        },
-        padding: {left: 50, right: 50, bottom: 50, top: 50},
-
+        }
     };
     const distanceOptions = {
         distanceapiUrl: 'https://api.woosmap.com/distance/distancematrix/json?',
@@ -250,12 +242,12 @@
     }
 
     function setMarkerHover(latlng) {
-        markerHover = new woosmap.map.Marker({
+        /*markerHover = new woosmap.map.Marker({
             map,
             position: latlng,
             icon: './images/markers/yvesrocher-marker-selected.svg',
             zIndex: 1000
-        });
+        });*/
     }
 
     function setMarkerLocation(latlng) {
@@ -271,7 +263,7 @@
     }
 
     function setMarkerStore(latlng) {
-        if (markerStore) {
+        /*if (markerStore) {
             markerStore.setMap(null);
         }
         markerStore = new woosmap.map.Marker({
@@ -279,7 +271,7 @@
             position: latlng,
             icon: './images/markers/yvesrocher-marker-selected.svg',
             zIndex: 1000
-        });
+        });*/
     }
 
 
@@ -300,6 +292,7 @@
     }
 
     function clearMapSelectedStore() {
+        console.log('unselected');
         woosmap.map.event.trigger(map, 'store_unselected');
     }
 
