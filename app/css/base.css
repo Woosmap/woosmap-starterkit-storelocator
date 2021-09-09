@@ -208,7 +208,6 @@ body:not(.mobile) #search-container.selected-store .search-controls {
 
 
 #selected-store-container {
-    display: none;
     position: absolute;
     top: 0;
     bottom: 0;
