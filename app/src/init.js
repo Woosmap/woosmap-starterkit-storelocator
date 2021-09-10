@@ -16,7 +16,7 @@
         types: ["locality", "postal_code", "admin_level", "country", "airport", "metro_station", "train_station"]
     };
     const googleLoadOptions = {
-        key: "AIzaSyCOtRab6Lh2pNn7gYxvAqN5leETC24OXYQ",
+        key: "AIzaXXXXXXX ",
         language: "en",
         region: "GB",
         version: "3.39"
@@ -127,7 +127,7 @@
         "{{#contact.phone}}<div  class='store-contact'><a href='tel:{{contact.phone}}'>{{contact.phone}}</a></div>{{/contact.phone}}" +
         "<div class='store-distance'>{{storeDistance}}</div>" +
         "</div></div>" +
-        "<div class='store-photo'><img src='./images/default.svg'/></div></div>";
+        "<div class='store-photo'><img src='./images/default.svg' alt='store image'/></div></div>";
 
     const filtersTagTemplate = "<ul>" +
         "{{#availableServices}}<li data-servicekey='{{serviceKey}}' data-servicename='{{serviceName}}'><button>" +
@@ -221,7 +221,7 @@
 
 
     function styleOnScroll() {
-        const listingStores = document.querySelector('#listing-stores-container:not(.mobile #listing-stores-container)');
+        const listingStores = document.querySelector('#listing-stores-container');
         listingStores.addEventListener('scroll', (() => {
             const scroll = listingStores.scrollTop;
             if (scroll > 0) {
@@ -236,19 +236,14 @@
         const selectedStoreHTML = document.querySelector('#selected-store-container');
         const listingStores = document.querySelector('#listing-stores-container');
         if (selectedStoreCell) {
-            const previousCell = selectedStoreHTML.querySelectorAll(".woosmap-tableview-cell");
-            console.log('selected1', selectedStoreHTML);
-            console.log('selected2', previousCell);
-            if (previousCell.length === 0) {
-                listingStores.classList.remove('animated', 'fadeOutLeft', 'fadeInLeft');
-                listingStores.classList.add('animated', 'fadeOutLeft');
-                if (!selectedStoreHTML.classList.contains("fadeInRight")) {
-                    selectedStoreHTML.className = '';
-                    selectedStoreHTML.classList.add('animated', 'fadeInRight');
-                    selectedStoreHTML.addEventListener("animationend", () => {
-                        selectedStoreHTML.classList.remove('animated');
-                    }, {once: true});
-                }
+            listingStores.classList.remove('animated', 'fadeOutLeft', 'fadeInLeft');
+            listingStores.classList.add('animated', 'fadeOutLeft');
+            if (!selectedStoreHTML.classList.contains("fadeInRight")) {
+                selectedStoreHTML.className = '';
+                selectedStoreHTML.classList.add('animated', 'fadeInRight');
+                selectedStoreHTML.addEventListener("animationend", () => {
+                    selectedStoreHTML.classList.remove('animated');
+                }, {once: true});
             }
             document.querySelector('#search-container').classList.add('selected-store');
             selectedStoreHTML.style.display = 'block';
@@ -266,7 +261,6 @@
             renderPhoto(selectedStoreHTML, '.store-photo-header', photosSrcFull, "./images/full/");
             selectedStoreHTML.scrollTo({top: 0});
         } else {
-            console.log(selectedStoreHTML);
             selectedStoreHTML.className = '';
             selectedStoreHTML.classList.add('animated', 'fadeOutRight');
             listingStores.className = '';
@@ -401,55 +395,56 @@
     }
 
     function clearActiveFilters() {
-        woosmap.$('.filters-list li').removeClass('active-filter');
-        woosmap.$('#filters-btn').removeClass('active');
-        woosmap.$("#filters-btn .filter-label").text("Filter");
-        woosmap.$("#aroundme-btn .filter-label").text("Geolocate");
-        woosmap.$('#aroundme-btn').removeClass();
-        woosmap.$('#opennow-btn').removeClass();
+        document.querySelectorAll('.filters-list li').forEach(el => {
+            el.classList.remove('active-filter');
+        });
+        document.querySelector('#filters-btn').classList.remove('active');
+        document.querySelector("#filters-btn .filter-label").textContent = "Filter";
+        document.querySelector("#aroundme-btn .filter-label").textContent = "Geolocate";
+        document.querySelector('#aroundme-btn').className = '';
+        document.querySelector('#opennow-btn').className = '';
         filterByTags();
     }
 
     function buildFiltersView() {
         const templateRenderer = new woosmap.TemplateRenderer(filtersTagTemplate);
-        woosmap.$('.filters-list').append(templateRenderer.render({availableServices}));
-        woosmap.$('.filters-list li').click(function () {
-            woosmap.$(this).toggleClass('active-filter');
-            let filters = [];
-            let filterLabel = ""
-            woosmap.$.each(woosmap.$('.filters-list .active-filter'), (index, object) => {
-                filters.push(woosmap.$(object).data('servicename'))
+        document.querySelector('.filters-list').innerHTML = templateRenderer.render({availableServices});
+        document.querySelectorAll('.filters-list li').forEach(filterEl => {
+            filterEl.addEventListener("click", (e) => {
+                filterEl.classList.toggle('active-filter');
+                let filters = [];
+                let filterLabel = ""
+                document.querySelectorAll('.filters-list .active-filter').forEach(activeFilterEl => {
+                    filters.push(activeFilterEl.dataset.servicename);
+                });
+                if (filters.length > 0) {
+                    document.querySelector('#filters-btn').classList.add('active');
+                    filterLabel = filters.join(", ");
+                } else {
+                    document.querySelector('#filters-btn').classList.remove('active');
+                    filterLabel = "Filter";
+                }
+                document.querySelector("#filters-btn .filter-label").textContent = filterLabel;
+                filterByTags();
             });
-            if (filters.length > 0) {
-                woosmap.$('#filters-btn').addClass('active');
-                filterLabel = filters.join(", ");
-            } else {
-                woosmap.$('#filters-btn').removeClass('active');
-                filterLabel = "Filter";
-            }
-            woosmap.$("#filters-btn .filter-label").text(filterLabel);
-            filterByTags();
         });
     }
 
     function updateStoresWithDistanceAPI(stores, callback) {
         if (mapView.get('location') && stores && stores.length > 0) {
             let destinations = stores.map(({geometry}) => `${geometry.coordinates[1]},${geometry.coordinates[0]}`);
-            woosmap.$.ajax({
-                url: distanceOptions.distanceapiUrl,
-                type: 'GET',
-                dataType: 'json',
-                data: {
-                    origins: `${mapView.get('location').lat},${mapView.get('location').lng}`,
-                    destinations: destinations.join("|"),
-                    units: distanceOptions.units,
-                    mode: distanceOptions.mode,
-                    language: distanceOptions.language,
-                    elements: distanceOptions.elements,
-                    key: distanceOptions.key
-                },
 
-                success({status, rows}) {
+            fetch(`${distanceOptions.distanceapiUrl}
+            origins=${mapView.get('location').lat},${mapView.get('location').lng}
+            &destinations=${destinations.join("|")}
+            &units=${distanceOptions.units}
+            &mode=${distanceOptions.mode}
+            &language=${distanceOptions.language}
+            &elements=${distanceOptions.elements}
+            &key=${distanceOptions.key}
+            `)
+                .then((response) => response.json())
+                .then(function ({status, rows}) {
                     if (status === "OK") {
                         const distanceObj = rows[0].elements;
                         for (let i = 0; i < stores.length; i++) {
@@ -459,39 +454,38 @@
                         }
                     }
                     callback(stores);
-                }
-            });
+                });
         } else {
             callback(stores);
         }
     }
 
     function buildTableView(stores) {
-        const $listingStores = woosmap.$('#listing-stores-container');
-        $listingStores.empty();
+        const listingStores = document.querySelector('#listing-stores-container');
+        listingStores.innerHTML = '';
         if (stores.length > 0) {
-            woosmap.$('#main').addClass('stores-displayed')
+            document.querySelector('#main').classList.add('stores-displayed')
         } else {
-            woosmap.$('#main').removeClass('stores-displayed');
+            document.querySelector('#main').classList.remove('stores-displayed');
         }
-        for (store in stores) {
-            const $cell = woosmap.$(document.createElement('div'));
-            $cell.append(getSummaryRenderedTemplate(stores[store]));
-            $cell.data('store', stores[store]);
-            $cell.click(function () {
+        for (let store in stores) {
+            const cell = document.createElement('div');
+            cell.innerHTML = getSummaryRenderedTemplate(stores[store]);
+            cell.storeObj = stores[store];
+            cell.addEventListener('click', () => {
                 markerHover.setMap(null);
-                const storeData = woosmap.$(this).data('store');
+                const storeData = cell.storeObj;
                 centerAndZoom(storeData);
                 selectedStoreObj.set('selectedStore', storeData);
             });
-            $cell.mouseenter(function () {
-                const storeData = woosmap.$(this).data('store');
+            cell.addEventListener('mouseenter', () => {
+                const storeData = cell.storeObj;
                 setMarkerHover({lat: storeData.geometry.coordinates[1], lng: storeData.geometry.coordinates[0]});
             });
-            $cell.mouseleave(() => {
+            cell.addEventListener('mouseleave', () => {
                 markerHover.setMap(null);
             });
-            $listingStores.append($cell)
+            listingStores.append(cell)
         }
         toggleAndSlideTableview();
     }
@@ -517,36 +511,32 @@
                     lat: coords.latitude,
                     lng: coords.longitude
                 });
-                woosmap.$('#aroundme-btn').removeClass().addClass('active');
+                document.querySelector('#aroundme-btn').className = '';
+                document.querySelector('#aroundme-btn').classList.add('active');
             },
             error => {
-                woosmap.$('#aroundme-btn').removeClass();
+                document.querySelector('#aroundme-btn').className = '';
             });
     }
 
     function geolocateUser() {
-        woosmap.$.ajax({
-            url: 'https://api.woosmap.com/geolocation/position/',
-            type: 'GET',
-            dataType: 'json',
-            data: {
-                key: woosmapLoadOptions.publicKey
-            },
-            success({accuracy, latitude, longitude, city}) {
-                if (accuracy > 100) {
+        fetch(`https://api.woosmap.com/geolocation/position/?key=${woosmapLoadOptions.publicKey}`)
+            .then((response) => response.json())
+            .then(function ({accuracy, latitude, longitude, city}) {
+                if (accuracy > 200) {
                     getHTML5Position();
                 } else {
                     search({lat: latitude, lng: longitude});
-                    woosmap.$('#aroundme-btn').removeClass().addClass('active');
+                    document.querySelector('#aroundme-btn').className = '';
+                    document.querySelector('#aroundme-btn').classList.add('active');
                     if (city) {
-                        woosmap.$('#aroundme-btn .filter-label').text(city);
+                        document.querySelector('#aroundme-btn .filter-label').textContent = city;
                     }
                 }
-            },
-            error() {
-                woosmap.$('#aroundme-btn').removeClass()
-            }
-        });
+            })
+            .catch((error) => {
+                document.querySelector('#aroundme-btn').className = '';
+            })
     }
 
     function search(location) {
@@ -561,7 +551,7 @@
             });
             dataSource.searchStoresByParameters(searchParams, stores => {
                 mapView.set('location', location); //The 'location' need to be set before the 'stores'
-                const openNow = woosmap.$('#opennow-btn').hasClass('active');
+                const openNow = document.querySelector('#opennow-btn').classList.contains('active');
                 if (openNow) {
                     stores.features = stores.features.filter(({properties}) => properties.open && properties.open.open_now === openNow);
                 }
@@ -577,7 +567,7 @@
         manageMobileView();
         const loader = new woosmap.MapsLoader(googleLoadOptions);
         loader.load(() => {
-            map = new google.maps.Map(woosmap.$('#my-map')[0], googleMapsOptions);
+            map = new google.maps.Map(document.querySelector('#my-map'), googleMapsOptions);
             mapView = new woosmap.TiledView(map, woosmapOptions);
             mapView.enablePan(false);
             mapView.enableZoom(false);
@@ -591,39 +581,40 @@
             registerMapClickEvent(mapView);
             selectedStoreObj.bindTo('selectedStore', mapView, 'selectedStore', false);
             currentWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-            woosmap.$(window).resize(debounce(() => {
+            window.addEventListener('resize', debounce(() => {
                 manageMobileView();
-            }, 150, false));
-            woosmap.$('#filters-btn').click(() => {
-                woosmap.$('#filters-panel').removeClass().addClass('animated fadeInDown');
+            }, 100, false))
+            document.querySelector('#filters-btn').addEventListener('click', () => {
+                document.querySelector('#filters-panel').className = '';
+                document.querySelector('#filters-panel').classList.add('animated', 'fadeInDown');
             });
-            woosmap.$('#close-btn').click(() => {
-                woosmap.$('#filters-panel').addClass('animated fadeOutDown');
+            document.querySelector('#close-btn').addEventListener('click', () => {
+                document.querySelector('#filters-panel').classList.add('animated', 'fadeOutDown');
             });
-            woosmap.$('#opennow-btn').click(() => {
-                woosmap.$('#opennow-btn').toggleClass('active');
+            document.querySelector('#opennow-btn').addEventListener('click', () => {
+                document.querySelector('#opennow-btn').classList.toggle('active');
                 search(mapView.get('location'));
             });
-            woosmap.$('#reset-btn').click(() => {
+            document.querySelector('#reset-btn').addEventListener('click', () => {
                 buildTableView([]);
                 clearMapSelectedStore();
                 mapView.set('location', null);
                 mapView.set('stores', null);
                 clearActiveFilters();
             });
-            woosmap.$('#aroundme-btn').click(() => {
-                woosmap.$('#aroundme-btn').toggleClass('loading');
+            document.querySelector('#aroundme-btn').addEventListener('click', () => {
+                document.querySelector('#aroundme-btn').classList.toggle('loading');
                 geolocateUser();
             });
             buildFiltersView();
             styleOnScroll();
             initSearchParam();
         });
-        let localitiesWidget = new woosmap.localities.Autocomplete('search-input', localitiesOptions);
+        const localitiesWidget = new woosmap.localities.Autocomplete('search-input', localitiesOptions);
         localitiesWidget.addListener('selected_locality', () => {
-            let locality = localitiesWidget.getSelectedLocality();
-            woosmap.$('#aroundme-btn').removeClass();
-            woosmap.$('#aroundme-btn .filter-label').text("Geolocate");
+            const locality = localitiesWidget.getSelectedLocality();
+            document.querySelector('#aroundme-btn').className = '';
+            document.querySelector('#aroundme-btn .filter-label').textContent = "Geolocate";
             search(locality.location);
         });
     }
