@@ -1,4 +1,4 @@
-(function () {
+(() => {
     const meterToYard = 1.09361;
     const unitSystem = 'metric'; // or 'imperial'
     const mobileBreakPoint = 750;
@@ -16,7 +16,7 @@
         types: ["locality", "postal_code", "admin_level", "country", "airport", "metro_station", "train_station"]
     };
     const googleLoadOptions = {
-        key: "AIzaSyCOtRab6Lh2pNn7gYxvAqN5leETC24OXYQ",
+        key: "AIzaSyBn3kw1bNdgmiXAczwr2DcKLAaW-M3nX14",
         language: "en",
         region: "GB",
         version: "3.39"
@@ -127,7 +127,7 @@
         "{{#contact.phone}}<div  class='store-contact'><a href='tel:{{contact.phone}}'>{{contact.phone}}</a></div>{{/contact.phone}}" +
         "<div class='store-distance'>{{storeDistance}}</div>" +
         "</div></div>" +
-        "<div class='store-photo'><img src='./images/default.svg'/></div></div>";
+        "<div class='store-photo'><img src='./images/default.svg' alt='store image'/></div></div>";
 
     const filtersTagTemplate = "<ul>" +
         "{{#availableServices}}<li data-servicekey='{{serviceKey}}' data-servicename='{{serviceName}}'><button>" +
@@ -137,15 +137,21 @@
         "</div></button></li>{{/availableServices}}" +
         "</ul>"
 
-    let map, mapView, dataSource, selectedStoreObj, currentStoreId, markerHover = null;
+    let map;
+    let mapView;
+    let dataSource;
+    let selectedStoreObj;
+    let currentStoreId;
+    let markerHover = null;
     let searchQuery = '';
     const photosSrcFull = ["1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg", "11.jpg", "12.jpg", "13.jpg", "14.jpg", "15.jpg", "16.jpg", "17.jpg", "18.jpg", "19.jpg", "20.jpg", "21.jpg", "22.jpg", "23.jpg"];
 
     function debounce(func, wait, immediate) {
         let timeout;
         return function () {
-            let context = this, args = arguments;
-            const later = function () {
+            let context = this;
+            let args = arguments;
+            const later = () => {
                 timeout = null;
                 if (!immediate) func.apply(context, args);
             };
@@ -157,9 +163,7 @@
     }
 
     String.prototype.capitalize = function () {
-        return this.toLowerCase().replace(/(?:^|\s)\S/g, function (a) {
-            return a.toUpperCase();
-        });
+        return this.toLowerCase().replace(/(?:^|\s)\S/g, a => a.toUpperCase());
     };
 
 
@@ -173,38 +177,39 @@
             distance *= meterToYard;
         }
         if (distance < system.factor) {
-            return Math.round(distance) + '\u00A0' + system.smallUnit;
+            return `${Math.round(distance)}\u00A0${system.smallUnit}`;
         } else {
-            return parseFloat((distance / system.factor).toFixed(1)) + '\u00A0' + system.unit;
+            return `${parseFloat((distance / system.factor).toFixed(1))}\u00A0${system.unit}`;
         }
     }
 
 
     function manageMobileView() {
-        if (currentWidth !== woosmap.$(window).width()) {
-            if (woosmap.$(document).width() >= mobileBreakPoint) {
-                if (!woosmap.$("#search-container").parent("#sidebar").length) {
-                    woosmap.$("#sidebar").prepend(woosmap.$("#search-container"));
-                    woosmap.$("body").removeClass("mobile");
+        const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+        if (currentWidth !== width) {
+            if (width >= mobileBreakPoint) {
+                if (!document.querySelector("#sidebar").contains(document.querySelector("#search-container"))) {
+                    document.querySelector("#sidebar").insertBefore(document.querySelector("#search-container"), document.querySelector("#sidebar").childNodes[0]);
+                    document.body.classList.remove("mobile");
                     woosmapOptions.padding.top = 50;
                 }
             } else {
-                if (!woosmap.$("#search-container").parent("#my-map-container").length) {
-                    woosmap.$("#my-map-container").prepend(woosmap.$("#search-container"));
-                    woosmap.$("body").addClass("mobile");
+                if (!document.querySelector("#my-map-container").contains(document.querySelector("#search-container"))) {
+                    document.querySelector("#my-map-container").insertBefore(document.querySelector("#search-container"), document.querySelector("#my-map-container").childNodes[0]);
+                    document.body.classList.add("mobile");
                     woosmapOptions.padding.top = 100;
                 }
             }
-            currentWidth = woosmap.$(window).width();
+            currentWidth = width;
         }
     }
 
     function renderPhoto(cell, selector, photosSrc, rootPath) {
-        woosmap.$(cell).find(selector).css('background-image', 'url(' + rootPath + photosSrc[Math.floor(Math.random() * photosSrc.length)] + ')');
+        cell.querySelector(selector).style.backgroundImage = `url(${rootPath}${photosSrc[Math.floor(Math.random() * photosSrc.length)]})`;
     }
 
     function getURLParameter(name) {
-        return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
+        return decodeURIComponent((new RegExp(`[?|&]${name}=([^&;]+?)(&|#|;|$)`).exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
     }
 
     function initSearchParam() {
@@ -216,51 +221,52 @@
 
 
     function styleOnScroll() {
-        const $listingStores = woosmap.$('#listing-stores-container').not('.mobile #listing-stores-container');
-        $listingStores.scroll(function () {
-            var scroll = $listingStores.scrollTop();
+        const listingStores = document.querySelector('#listing-stores-container');
+        listingStores.addEventListener('scroll', (() => {
+            const scroll = listingStores.scrollTop;
             if (scroll > 0) {
-                $listingStores.addClass("active");
+                listingStores.classList.add("active");
             } else {
-                $listingStores.removeClass("active");
+                listingStores.classList.remove("active");
             }
-        });
+        }));
     }
 
     function toggleAndSlideTableview(selectedStoreCell) {
-        const $selectedStoreHTML = woosmap.$('#selected-store-container');
-        const $listingStores = woosmap.$('#listing-stores-container');
+        const selectedStoreHTML = document.querySelector('#selected-store-container');
+        const listingStores = document.querySelector('#listing-stores-container');
         if (selectedStoreCell) {
-            $selectedStoreCell = woosmap.$(selectedStoreCell).html();
-            const $previousCell = $selectedStoreHTML.find(".woosmap-tableview-cell");
-            if ($previousCell.length === 0) {
-                $listingStores.removeClass('animated fadeOutLeft fadeInLeft').addClass('animated fadeOutLeft');
-                if (!$selectedStoreHTML.hasClass("fadeInRight")) {
-                    $selectedStoreHTML.removeClass().addClass('animated fadeInRight');
-                    $selectedStoreHTML.one("animationend", function () {
-                        $selectedStoreHTML.removeClass('animated');
-                    });
-                }
+            listingStores.classList.remove('animated', 'fadeOutLeft', 'fadeInLeft');
+            listingStores.classList.add('animated', 'fadeOutLeft');
+            if (!selectedStoreHTML.classList.contains("fadeInRight")) {
+                selectedStoreHTML.className = '';
+                selectedStoreHTML.classList.add('animated', 'fadeInRight');
+                selectedStoreHTML.addEventListener("animationend", () => {
+                    selectedStoreHTML.classList.remove('animated');
+                }, {once: true});
             }
-            woosmap.$('#search-container').addClass('selected-store');
-            $selectedStoreHTML.show().html($selectedStoreCell);
-            if ($listingStores.hasClass('home')) {
-                woosmap.$('#back-to-results').html('Back to home');
+            document.querySelector('#search-container').classList.add('selected-store');
+            selectedStoreHTML.style.display = 'block';
+            selectedStoreHTML.innerHTML = selectedStoreCell;
+            if (listingStores.classList.contains('home')) {
+                document.querySelector('#back-to-results').innerHTML = 'Back to home';
             } else {
-                woosmap.$('#back-to-results').html('Back to results');
+                document.querySelector('#back-to-results').innerHTML = 'Back to results';
             }
-            woosmap.$('#back-to-results').click(function () {
+            document.querySelector('#back-to-results').addEventListener('click', () => {
                 toggleAndSlideTableview();
                 clearMapSelectedStore();
                 setSearchBounds();
             });
-            renderPhoto($selectedStoreHTML, '.store-photo-header', photosSrcFull, "./images/full/");
-            $selectedStoreHTML.scrollTop(0);
+            renderPhoto(selectedStoreHTML, '.store-photo-header', photosSrcFull, "./images/full/");
+            selectedStoreHTML.scrollTo({top: 0});
         } else {
-            $selectedStoreHTML.removeClass().addClass('animated fadeOutRight');
-            $listingStores.removeClass().addClass('animated fadeInLeft');
-            $listingStores.scrollTop(0);
-            woosmap.$('#search-container').removeClass('selected-store');
+            selectedStoreHTML.className = '';
+            selectedStoreHTML.classList.add('animated', 'fadeOutRight');
+            listingStores.className = '';
+            listingStores.classList.add('animated', 'fadeInLeft');
+            listingStores.scrollTo({top: 0});
+            document.querySelector('#search-container').classList.remove('selected-store');
         }
     }
 
@@ -273,16 +279,16 @@
         });
     }
 
-    function centerAndZoom(store) {
+    function centerAndZoom({geometry}) {
         if (map.getZoom() < minZoomLevelStore) {
             woosmap.maps.utils.centerAndZoom(map, {
-                lat: store.geometry.coordinates[1],
-                lng: store.geometry.coordinates[0]
+                lat: geometry.coordinates[1],
+                lng: geometry.coordinates[0]
             }, minZoomLevelStore);
         } else {
             mapView.panTo({
-                    lat: store.geometry.coordinates[1],
-                    lng: store.geometry.coordinates[0]
+                    lat: geometry.coordinates[1],
+                    lng: geometry.coordinates[0]
                 },
                 woosmapOptions.padding);
         }
@@ -300,8 +306,8 @@
         const q = woosmap.query;
         let fields = [];
         searchQuery = '';
-        woosmap.$.each(woosmap.$('.filters-list .active-filter'), function (index, object) {
-            fields.push(q.F('tag', woosmap.$(object).data('servicekey')));
+        document.querySelectorAll('.filters-list .active-filter').forEach(filterObj => {
+            fields.push(q.F('tag', filterObj.dataset.servicekey));
         });
         if (fields.length > 0)
             searchQuery = q.and(fields);
@@ -318,7 +324,7 @@
                 return "24h/24";
             }
             end = openHours[slice].end;
-            hoursText += openHours[slice].start + "–" + end;
+            hoursText += `${openHours[slice].start}–${end}`;
             if (slice < openHours.length - 1) {
                 hoursText += ", ";
             }
@@ -355,135 +361,131 @@
         return hoursData.weekly_opening;
     }
 
-    function getDirectionGoogleMapsUrl(store) {
+    function getDirectionGoogleMapsUrl({address}) {
         const rootMapUrl = "https://maps.google.com?daddr=[Starbucks],";
-        return rootMapUrl + `${store.address.lines[0]} ${store.address.city}`;
+        return rootMapUrl + `${address.lines[0]} ${address.city}`;
     }
 
-    function getSummaryRenderedTemplate(store) {
+    function getSummaryRenderedTemplate({properties}) {
         const templateRenderer = new woosmap.TemplateRenderer(summaryStoreTemplate);
-        if (store.properties.storeDistanceApi) {
-            store.properties.storeDistance = store.properties.storeDistanceApi;
+        if (properties.storeDistanceApi) {
+            properties.storeDistance = properties.storeDistanceApi;
         } else {
-            store.properties.storeDistance = store.properties.distance ? getReadableDistance(store.properties.distance) : "";
+            properties.storeDistance = properties.distance ? getReadableDistance(properties.distance) : "";
         }
-        store.properties.name = store.properties.name.capitalize();
-        return templateRenderer.render(store.properties);
+        properties.name = properties.name.capitalize();
+        return templateRenderer.render(properties);
     }
 
-    function getSelectedRenderedTemplate(store) {
+    function getSelectedRenderedTemplate({properties}) {
         const templateRenderer = new woosmap.TemplateRenderer(selectedStoreTemplate);
-        store.properties.name = store.properties.name.capitalize();
+        properties.name = properties.name.capitalize();
         let openingHours = "";
-        if (store.properties.open && store.properties.open.open_now) {
-            openingHours = store.properties.open.current_slice["all-day"] ? "24/24" : store.properties.open.current_slice.start + "–" + store.properties.open.current_slice.end;
+        if (properties.open && properties.open.open_now) {
+            openingHours = properties.open.current_slice["all-day"] ? "24/24" : `${properties.open.current_slice.start}–${properties.open.current_slice.end}`;
         }
-        store.properties.openlabel = (store.properties.open && store.properties.open.open_now) ? "Open now: " + openingHours : "";
-        store.properties.week = store.properties.weekly_opening ? generateOpeningHoursHTML(store.properties.weekly_opening) : {};
-        if (store.properties.tags.length > 0) {
-            store.properties.services = store.properties.tags.map(value => (availableServices.filter(serviceObj => {
-                return serviceObj.serviceKey === value
-            })[0])).filter(x => x);
-            store.properties.hasServices = true;
+        properties.openlabel = (properties.open && properties.open.open_now) ? `Open now: ${openingHours}` : "";
+        properties.week = properties.weekly_opening ? generateOpeningHoursHTML(properties.weekly_opening) : {};
+        if (properties.tags.length > 0) {
+            properties.services = properties.tags.map(value => (availableServices.filter(({serviceKey}) => serviceKey === value)[0])).filter(x => x);
+            properties.hasServices = true;
         }
-        store.properties.directionUrl = getDirectionGoogleMapsUrl(store.properties);
-        return templateRenderer.render(store.properties);
+        properties.directionUrl = getDirectionGoogleMapsUrl(properties);
+        return templateRenderer.render(properties);
     }
 
     function clearActiveFilters() {
-        woosmap.$('.filters-list li').removeClass('active-filter');
-        woosmap.$('#filters-btn').removeClass('active');
-        woosmap.$("#filters-btn .filter-label").text("Filter");
-        woosmap.$("#aroundme-btn .filter-label").text("Geolocate");
-        woosmap.$('#aroundme-btn').removeClass();
-        woosmap.$('#opennow-btn').removeClass();
+        document.querySelectorAll('.filters-list li').forEach(el => {
+            el.classList.remove('active-filter');
+        });
+        document.querySelector('#filters-btn').classList.remove('active');
+        document.querySelector("#filters-btn .filter-label").textContent = "Filter";
+        document.querySelector("#aroundme-btn .filter-label").textContent = "Geolocate";
+        document.querySelector('#aroundme-btn').className = '';
+        document.querySelector('#opennow-btn').className = '';
         filterByTags();
     }
 
     function buildFiltersView() {
         const templateRenderer = new woosmap.TemplateRenderer(filtersTagTemplate);
-        woosmap.$('.filters-list').append(templateRenderer.render({availableServices: availableServices}));
-        woosmap.$('.filters-list li').click(function () {
-            woosmap.$(this).toggleClass('active-filter');
-            let filters = [];
-            let filterLabel = ""
-            woosmap.$.each(woosmap.$('.filters-list .active-filter'), function (index, object) {
-                filters.push(woosmap.$(object).data('servicename'))
+        document.querySelector('.filters-list').innerHTML = templateRenderer.render({availableServices});
+        document.querySelectorAll('.filters-list li').forEach(filterEl => {
+            filterEl.addEventListener("click", (e) => {
+                filterEl.classList.toggle('active-filter');
+                let filters = [];
+                let filterLabel = ""
+                document.querySelectorAll('.filters-list .active-filter').forEach(activeFilterEl => {
+                    filters.push(activeFilterEl.dataset.servicename);
+                });
+                if (filters.length > 0) {
+                    document.querySelector('#filters-btn').classList.add('active');
+                    filterLabel = filters.join(", ");
+                } else {
+                    document.querySelector('#filters-btn').classList.remove('active');
+                    filterLabel = "Filter";
+                }
+                document.querySelector("#filters-btn .filter-label").textContent = filterLabel;
+                filterByTags();
             });
-            if (filters.length > 0) {
-                woosmap.$('#filters-btn').addClass('active');
-                filterLabel = filters.join(", ");
-            } else {
-                woosmap.$('#filters-btn').removeClass('active');
-                filterLabel = "Filter";
-            }
-            woosmap.$("#filters-btn .filter-label").text(filterLabel);
-            filterByTags();
         });
     }
 
     function updateStoresWithDistanceAPI(stores, callback) {
         if (mapView.get('location') && stores && stores.length > 0) {
-            let destinations = stores.map((store) => {
-                return store.geometry.coordinates[1] + "," + store.geometry.coordinates[0]
-            });
-            woosmap.$.ajax({
-                url: distanceOptions.distanceapiUrl,
-                type: 'GET',
-                dataType: 'json',
-                data: {
-                    origins: mapView.get('location').lat + "," + mapView.get('location').lng,
-                    destinations: destinations.join("|"),
-                    units: distanceOptions.units,
-                    mode: distanceOptions.mode,
-                    language: distanceOptions.language,
-                    elements: distanceOptions.elements,
-                    key: distanceOptions.key
-                },
+            let destinations = stores.map(({geometry}) => `${geometry.coordinates[1]},${geometry.coordinates[0]}`);
 
-                success: function (response) {
-                    if (response.status === "OK") {
-                        const distanceObj = response.rows[0].elements;
+            fetch(`${distanceOptions.distanceapiUrl}
+            origins=${mapView.get('location').lat},${mapView.get('location').lng}
+            &destinations=${destinations.join("|")}
+            &units=${distanceOptions.units}
+            &mode=${distanceOptions.mode}
+            &language=${distanceOptions.language}
+            &elements=${distanceOptions.elements}
+            &key=${distanceOptions.key}
+            `)
+                .then((response) => response.json())
+                .then(function ({status, rows}) {
+                    if (status === "OK") {
+                        const distanceObj = rows[0].elements;
                         for (let i = 0; i < stores.length; i++) {
                             if (distanceObj[i].status !== "ZERO_RESULTS" && distanceObj[i].status !== "NOT_FOUND") {
-                                stores[i].properties.storeDistanceApi = distanceObj[i].distance.text + " (" + distanceObj[i].duration.text + ")";
+                                stores[i].properties.storeDistanceApi = `${distanceObj[i].distance.text} (${distanceObj[i].duration.text})`;
                             }
                         }
                     }
                     callback(stores);
-                }
-            });
+                });
         } else {
             callback(stores);
         }
     }
 
     function buildTableView(stores) {
-        const $listingStores = woosmap.$('#listing-stores-container');
-        $listingStores.empty();
+        const listingStores = document.querySelector('#listing-stores-container');
+        listingStores.innerHTML = '';
         if (stores.length > 0) {
-            woosmap.$('#main').addClass('stores-displayed')
+            document.querySelector('#main').classList.add('stores-displayed')
         } else {
-            woosmap.$('#main').removeClass('stores-displayed');
+            document.querySelector('#main').classList.remove('stores-displayed');
         }
-        for (store in stores) {
-            const $cell = woosmap.$(document.createElement('div'));
-            $cell.append(getSummaryRenderedTemplate(stores[store]));
-            $cell.data('store', stores[store]);
-            $cell.click(function () {
+        for (let store in stores) {
+            const cell = document.createElement('div');
+            cell.innerHTML = getSummaryRenderedTemplate(stores[store]);
+            cell.storeObj = stores[store];
+            cell.addEventListener('click', () => {
                 markerHover.setMap(null);
-                const storeData = woosmap.$(this).data('store');
+                const storeData = cell.storeObj;
                 centerAndZoom(storeData);
                 selectedStoreObj.set('selectedStore', storeData);
             });
-            $cell.mouseenter(function () {
-                const storeData = woosmap.$(this).data('store');
+            cell.addEventListener('mouseenter', () => {
+                const storeData = cell.storeObj;
                 setMarkerHover({lat: storeData.geometry.coordinates[1], lng: storeData.geometry.coordinates[0]});
             });
-            $cell.mouseleave(function () {
+            cell.addEventListener('mouseleave', () => {
                 markerHover.setMap(null);
             });
-            $listingStores.append($cell)
+            listingStores.append(cell)
         }
         toggleAndSlideTableview();
     }
@@ -504,41 +506,37 @@
     }
 
     function getHTML5Position() {
-        navigator.geolocation.getCurrentPosition(function (position) {
+        navigator.geolocation.getCurrentPosition(({coords}) => {
                 search({
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
+                    lat: coords.latitude,
+                    lng: coords.longitude
                 });
-                woosmap.$('#aroundme-btn').removeClass().addClass('active');
+                document.querySelector('#aroundme-btn').className = '';
+                document.querySelector('#aroundme-btn').classList.add('active');
             },
-            function (error) {
-                woosmap.$('#aroundme-btn').removeClass();
+            error => {
+                document.querySelector('#aroundme-btn').className = '';
             });
     }
 
     function geolocateUser() {
-        woosmap.$.ajax({
-            url: 'https://api.woosmap.com/geolocation/position/',
-            type: 'GET',
-            dataType: 'json',
-            data: {
-                key: woosmapLoadOptions.publicKey
-            },
-            success: function (position) {
-                if (position.accuracy > 100) {
+        fetch(`https://api.woosmap.com/geolocation/position/?key=${woosmapLoadOptions.publicKey}`)
+            .then((response) => response.json())
+            .then(function ({accuracy, latitude, longitude, city}) {
+                if (accuracy > 200) {
                     getHTML5Position();
                 } else {
-                    search({lat: position.latitude, lng: position.longitude});
-                    woosmap.$('#aroundme-btn').removeClass().addClass('active');
-                    if (position.city) {
-                        woosmap.$('#aroundme-btn .filter-label').text(position.city);
+                    search({lat: latitude, lng: longitude});
+                    document.querySelector('#aroundme-btn').className = '';
+                    document.querySelector('#aroundme-btn').classList.add('active');
+                    if (city) {
+                        document.querySelector('#aroundme-btn .filter-label').textContent = city;
                     }
                 }
-            },
-            error: function () {
-                woosmap.$('#aroundme-btn').removeClass()
-            }
-        });
+            })
+            .catch((error) => {
+                document.querySelector('#aroundme-btn').className = '';
+            })
     }
 
     function search(location) {
@@ -551,16 +549,14 @@
                 page: 1,
                 storesByPage: 15
             });
-            dataSource.searchStoresByParameters(searchParams, function (stores) {
+            dataSource.searchStoresByParameters(searchParams, stores => {
                 mapView.set('location', location); //The 'location' need to be set before the 'stores'
-                const openNow = woosmap.$('#opennow-btn').hasClass('active');
+                const openNow = document.querySelector('#opennow-btn').classList.contains('active');
                 if (openNow) {
-                    stores.features = stores.features.filter(function (store) {
-                        return (store.properties.open && store.properties.open.open_now === openNow);
-                    });
+                    stores.features = stores.features.filter(({properties}) => properties.open && properties.open.open_now === openNow);
                 }
                 mapView.set('stores', stores.features);
-                updateStoresWithDistanceAPI(stores.features, function (stores_updated) {
+                updateStoresWithDistanceAPI(stores.features, stores_updated => {
                     buildTableView(stores_updated);
                 },)
             });
@@ -570,8 +566,8 @@
     function woosmap_main() {
         manageMobileView();
         const loader = new woosmap.MapsLoader(googleLoadOptions);
-        loader.load(function () {
-            map = new google.maps.Map(woosmap.$('#my-map')[0], googleMapsOptions);
+        loader.load(() => {
+            map = new google.maps.Map(document.querySelector('#my-map'), googleMapsOptions);
             mapView = new woosmap.TiledView(map, woosmapOptions);
             mapView.enablePan(false);
             mapView.enableZoom(false);
@@ -584,49 +580,50 @@
             selectedStoreObj.selectedStore = null;
             registerMapClickEvent(mapView);
             selectedStoreObj.bindTo('selectedStore', mapView, 'selectedStore', false);
-            currentWidth = woosmap.$(window).width();
-            woosmap.$(window).resize(debounce(() => {
+            currentWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+            window.addEventListener('resize', debounce(() => {
                 manageMobileView();
-            }, 150, false));
-            woosmap.$('#filters-btn').click(function () {
-                woosmap.$('#filters-panel').removeClass().addClass('animated fadeInDown');
+            }, 100, false))
+            document.querySelector('#filters-btn').addEventListener('click', () => {
+                document.querySelector('#filters-panel').className = '';
+                document.querySelector('#filters-panel').classList.add('animated', 'fadeInDown');
             });
-            woosmap.$('#close-btn').click(function () {
-                woosmap.$('#filters-panel').addClass('animated fadeOutDown');
+            document.querySelector('#close-btn').addEventListener('click', () => {
+                document.querySelector('#filters-panel').classList.add('animated', 'fadeOutDown');
             });
-            woosmap.$('#opennow-btn').click(function () {
-                woosmap.$('#opennow-btn').toggleClass('active');
+            document.querySelector('#opennow-btn').addEventListener('click', () => {
+                document.querySelector('#opennow-btn').classList.toggle('active');
                 search(mapView.get('location'));
             });
-            woosmap.$('#reset-btn').click(function () {
+            document.querySelector('#reset-btn').addEventListener('click', () => {
                 buildTableView([]);
                 clearMapSelectedStore();
                 mapView.set('location', null);
                 mapView.set('stores', null);
                 clearActiveFilters();
             });
-            woosmap.$('#aroundme-btn').click(function () {
-                woosmap.$('#aroundme-btn').toggleClass('loading');
+            document.querySelector('#aroundme-btn').addEventListener('click', () => {
+                document.querySelector('#aroundme-btn').classList.toggle('loading');
                 geolocateUser();
             });
             buildFiltersView();
             styleOnScroll();
             initSearchParam();
         });
-        let localitiesWidget = new woosmap.localities.Autocomplete('search-input', localitiesOptions);
+        const localitiesWidget = new woosmap.localities.Autocomplete('search-input', localitiesOptions);
         localitiesWidget.addListener('selected_locality', () => {
-            let locality = localitiesWidget.getSelectedLocality();
-            woosmap.$('#aroundme-btn').removeClass();
-            woosmap.$('#aroundme-btn .filter-label').text("Geolocate");
+            const locality = localitiesWidget.getSelectedLocality();
+            document.querySelector('#aroundme-btn').className = '';
+            document.querySelector('#aroundme-btn .filter-label').textContent = "Geolocate";
             search(locality.location);
         });
     }
 
     if (window.attachEvent) {
-        window.attachEvent('onload', function () {
+        window.attachEvent('onload', () => {
             WoosmapLoader.load(woosmapLoadOptions);
         });
     } else {
         window.addEventListener('load', WoosmapLoader.load(woosmapLoadOptions), false);
     }
-}());
+})();
