@@ -16,7 +16,7 @@
         types: ["locality", "postal_code", "admin_level", "country", "airport", "metro_station", "train_station"]
     };
     const googleLoadOptions = {
-        key: "AIzaSyBn3kw1bNdgmiXAczwr2DcKLAaW-M3nX14",
+        key: "AIzaSyAAFBEYl6VnHSyllckphcRWzJlomsoXosA",
         language: "en",
         region: "GB",
         version: "3.39"
