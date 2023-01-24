@@ -19,7 +19,7 @@
         key: "AIzaSyAAFBEYl6VnHSyllckphcRWzJlomsoXosA",
         language: "en",
         region: "GB",
-        version: "3.39"
+        version: "3.51"
     };
     const googleMapsOptions = {
         center: {
