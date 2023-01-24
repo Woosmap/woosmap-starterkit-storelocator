@@ -1,4 +1,3 @@
-"use strict";
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -6,9 +5,13 @@ const path = require('path');
 
 module.exports = {
     plugins: [
-        new CopyWebpackPlugin([
-            {from: 'app/images', to: 'images'}
-        ]),
+        new CopyWebpackPlugin(
+            {
+                patterns: [
+                    {from: 'app/images', to: 'images'}
+                ]
+            }
+        ),
         new MiniCssExtractPlugin(),
         new HtmlWebpackPlugin({
             template: 'app/index.html',
@@ -18,13 +21,7 @@ module.exports = {
         rules: [
             {
                 test: /\.css$/i,
-                use: [{
-                    loader: MiniCssExtractPlugin.loader,
-                    options: {
-                        hmr: process.env.NODE_ENV === 'development',
-                        reloadAll: true,
-                    }
-                }, 'css-loader'],
+                use: [MiniCssExtractPlugin.loader, "css-loader"],
             },
             {
                 test: /\.m?js$/,
@@ -41,10 +38,13 @@ module.exports = {
     entry: ['./app/src/init.js', './app/css/base.css', './app/css/effect.css', './app/css/theme.css'],
     output: {
         path: path.resolve(__dirname, './dist'),
-        filename: '[name].[hash].js'
+        filename: '[name].[fullhash].js'
     },
     mode: 'development',
     devServer: {
-        contentBase: path.join(__dirname, 'dist')
+        static: {
+            directory: path.join(__dirname, 'dist')
+        },
+        server: 'https',
     }
 };
